@@ -1,7 +1,5 @@
 """Defines Stars. A Star is a single page, part of a Constellation."""
 
-import uuid
-
 
 class Star:
     """A single page in a Constellation. Implemented by subclasses."""
@@ -13,7 +11,7 @@ class Star:
     star_type = "base"
 
     def __init__(self):
-        self.uuid = uuid.uuid4()
+        pass
 
     @classmethod
     def parse(cls, cells):
@@ -22,7 +20,7 @@ class Star:
         raise NotImplementedError()
 
     def serialize(self) -> dict:
-        return {"type": self.star_type, "uuid": str(self.uuid)}
+        return {"kind": self.star_type}
 
 
 class PureMarkdown(Star):
@@ -44,7 +42,7 @@ class PureMarkdown(Star):
     @classmethod
     def parse(cls, cells):
         if cells and cells[0]["cell_type"] == "markdown":
-            return (1, cls(cells[0]["source"]))
+            return (1, cls("".join(cells[0]["source"])))
         else:
             return None
 
@@ -112,7 +110,13 @@ class MarkdownPanel(Star):
         ):
             # figure out if mpl or panel
             if guess_plot_type(cells[1]) == "panel":
-                return (2, cls(cells[0]["source"], strip_metadata(cells[1]["source"])))
+                return (
+                    2,
+                    cls(
+                        "".join(cells[0]["source"]),
+                        "".join(strip_metadata(cells[1]["source"])),
+                    ),
+                )
         else:
             return None
 
@@ -175,7 +179,13 @@ class MarkdownLatex(Star):
             "markdown",
         ):
             if cells[1]["source"][0].strip().lower() == "#constellate: latex":
-                return (2, cls(cells[0]["source"], strip_metadata(cells[1]["source"])))
+                return (
+                    2,
+                    cls(
+                        "".join(cells[0]["source"]),
+                        "".join(strip_metadata(cells[1]["source"])),
+                    ),
+                )
         else:
             return None
 
@@ -225,7 +235,11 @@ class MarkdownCode(Star):
 
                 return (
                     2,
-                    cls(cells[0]["source"], strip_metadata(cells[1]["source"]), output),
+                    cls(
+                        "".join(cells[0]["source"]),
+                        "".join(strip_metadata(cells[1]["source"])),
+                        output,
+                    ),
                 )
         else:
             return None
