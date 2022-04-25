@@ -7,10 +7,11 @@ import base64
 from copy import deepcopy
 from os import PathLike
 from pathlib import Path
-from typing import Sequence, Optional, Tuple
+from typing import Sequence, Optional, Tuple, MutableMapping
 from types import ModuleType
 import html
 import re
+from urllib.parse import quote
 
 from .star import NB_STARS, MarkdownMatplotlib, Star
 
@@ -42,6 +43,7 @@ class Constellation:
         self.stars = stars
         self.title = "Constellation"
         self.ids: Sequence[str] = []
+        self.mpl_images: MutableMapping[str, str] = {}
         # we want things like images, which are difficult to recompute, tied to something besides a
         # UUID. For now, we use a hash that combines the setup code and the cell code. This is the
         # only code that can impact any one Star, so if we change other Stars there's no need to
@@ -97,7 +99,6 @@ class Constellation:
 
         self.outline = [match_heading(star.md) for star in self.stars]
         self.title = match_heading(self.stars[0].md)[1]
-
         self.breadcrumbs = []
         # make breadcrumbs
         for i, (level, name) in enumerate(self.outline):
@@ -116,11 +117,10 @@ class Constellation:
         self,
         star: MarkdownMatplotlib,
         star_id: str,
-        save_folder: PathLike,
         global_state: dict,
         global_mods: dict,
     ):
-        """Generates images from a Matplotlib cell and saves those to a folder.
+        """Generates images from a Matplotlib cell and saves those as base64.
 
         It will generally save as a PNG: the names of the output files should not be relied upon.
 
@@ -134,8 +134,6 @@ class Constellation:
         does not affect what this function outputs, only the current figure.
         star_id : str
             The identifier used to generate the file name.
-        save_location : PathLike
-            The location to save the results.
         global_state: dict
             The global state that can be re-copied.
         global_mods: dict
@@ -160,11 +158,28 @@ c1, c2, c3, c4, c5, c6, *cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
             exec(star.code, scope)
 
             # get the figure, making sure to import matplotlib
-            exec("import matplotlib.pyplot as plt", scope)
-            fig = eval(f"plt.gcf()", scope)
+            # we also need to get rid of the XML tag that matplotlib adds
+            exec(
+                """
+import matplotlib.pyplot as plt
+import io
+import base64
+bio = io.BytesIO()
+plt.savefig(bio,  format='svg')
+bio.seek(0)
+# get rid of xml tag, just include svg
+svg = bio.read().decode()
+svg = svg[svg.find('<svg'):].replace('\\n', '')
+pic_svg = svg
+plt.close('all')
+            """,
+                scope,
+            )
 
-            path = Path(save_folder) / f"{star_id}_{color_mode}.png"
-            exec(f"plt.savefig('{path}', bbox_inches='tight'), plt.close('all')", scope)
+            uri = eval("svg", scope)
+            self.mpl_images[
+                f"{star_id}_{color_mode}"
+            ] = "data:image/svg+xml;utf8," + quote(uri)
 
     def _get_global_state(self, setup_cells: Sequence[str]) -> Tuple[dict, dict]:
         """Returns the global setup state in a copyable and non-copyable component.
@@ -215,22 +230,15 @@ c1, c2, c3, c4, c5, c6, *cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
 
         return (new_global_state, global_mods)
 
-    def _save_all_matplotlib(self, save_folder: PathLike):
+    def _save_all_matplotlib(self):
         """Saves all of the images in the Constellation to the folder.
 
         The names are tied to the UUID of the Star, but this may change in the future.
-
-        Parameters
-        ----------
-        save_folder : PathLike
-            The folder to save the images in.
         """
         new_global_state, global_mods = self._get_global_state(self.setup_mpl)
         for star, star_id in zip(self.stars, self.ids):
             if star.star_type == "markdown_matplotlib":
-                self._run_matplotlib(
-                    star, star_id, save_folder, new_global_state, global_mods
-                )
+                self._run_matplotlib(star, star_id, new_global_state, global_mods)
 
     def _save_all_panel(self, save_folder: PathLike):
         """Saves all of the server code in the Constellation to the folder.
@@ -347,6 +355,10 @@ c1, c2, c3, c4, c5, c6, *cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
         stars = [star.serialize() for star in self.stars]
         for star, star_id in zip(stars, self.ids):
             star["star_id"] = star_id
+
+            if star["kind"] == "markdown_matplotlib":
+                for color_mode in ("light", "dark"):
+                    star[color_mode] = self.mpl_images[f"{star_id}_{color_mode}"]
 
         return {
             "setup_mpl": self.setup_mpl,
