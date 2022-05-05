@@ -1,5 +1,7 @@
 """Defines Stars. A Star is a single page, part of a Constellation."""
 
+from enum import Enum
+
 
 class Star:
     """A single page in a Constellation. Implemented by subclasses."""
@@ -47,15 +49,32 @@ class PureMarkdown(Star):
             return None
 
 
-def guess_plot_type(cell):
-    """Guesses if a cell outputs matplotlib or panel figures. Returns one of ('matplotlib', 'panel', None)."""
+class PlotType(Enum):
+    """A plot type for a cell producing a visual."""
+
+    MATPLOTLIB = "matplotlib"
+    PANEL = "panel"
+    PLOTLY = "plotly"
+    PLAIN = "plain"
+
+
+def guess_plot_type(cell) -> PlotType:
+    """Tries to deduce what type of figure a cell has."""
+
+    # Ideally, it's pretty easy to distinguish figure types by using the type of
+    # the output: PNGs are assumed to be matplotlib, JS is an interactive Panel
+    # figure, etc.
+
+    # The only downside here is that it requires that you ran the entire
+    # notebook before Constellating it. So we basically try for extra credit in
+    # those scenarios, guessing based on common library abbreviations. This
+    # isn't a good system, but it's just to smooth over some of the rough edges
+    # of usability and shouldn't be relied upon.
+
     code_src = cell["source"]
-    if code_src[0].strip().lower() == "#constellate: panel":
-        return "panel"
-    elif code_src[0].strip().lower() == "#constellate: matplotlib":
-        return "matplotlib"
-    elif code_src[0].strip().lower() == "#constellate: plain":
-        return None
+    line1 = code_src[0].strip().lower()
+    if line1.startswith("#constellate: "):
+        return PlotType(line1.lstrip("#constellate: ").lower())
     elif "outputs" in cell:
         out_types = set()
         for out in cell["outputs"]:
@@ -67,19 +86,33 @@ def guess_plot_type(cell):
             "application/javascript" in out_types
             or "application/vnd.jupyter.widget-view+json" in out_types
         ):
-            return "panel"
+            return PlotType.PANEL
         elif "image/png" in out_types:
-            return "matplotlib"
+            return PlotType.MATPLOTLIB
+        elif "application/vnd.plotly.v1+json" in out_types:
+            return PlotType.PLOTLY
 
     src = "".join(code_src)
-    mpl_libs = [lib + "." in src for lib in ("plt", "sns")]
-    panel_libs = [lib + "." in src for lib in ("bokeh", "pn")]
-    if any(mpl_libs) and not any(panel_libs):
-        return "matplotlib"
-    elif any(panel_libs) and not any(mpl_libs):
-        return "panel"
+
+    # Library abbreviations that are associated with a specific ecoystem. If we
+    # see only one of this set of libraries for a specific cell, we can be
+    # reasonably confident that it should be handled accordingly.
+
+    ecosystem_libs = {
+        PlotType.MATPLOTLIB: ("plt", "sns"),
+        PlotType.PANEL: ("bokeh", "pn", "hv"),
+        PlotType.PLOTLY: ("pio", "px", "plotly"),
+    }
+
+    found_libs = []
+    for eco_name, libs in ecosystem_libs.items():
+        if any([lib + "." in src for lib in libs]):
+            found_libs.append(eco_name)
+
+    if len(found_libs) == 1:
+        return found_libs[0]
     else:
-        return None
+        return PlotType.PLAIN
 
 
 def strip_metadata(code_src):
@@ -109,7 +142,7 @@ class MarkdownPanel(Star):
             "code",
         ):
             # figure out if mpl or panel
-            if guess_plot_type(cells[1]) == "panel":
+            if guess_plot_type(cells[1]) == PlotType.PANEL:
                 return (
                     2,
                     cls(
@@ -144,7 +177,7 @@ class MarkdownMatplotlib(Star):
             "code",
         ):
             # figure out if mpl or panel
-            if guess_plot_type(cells[1]) == "matplotlib":
+            if guess_plot_type(cells[1]) == PlotType.MATPLOTLIB:
                 return (
                     2,
                     cls(
@@ -184,6 +217,56 @@ class MarkdownLatex(Star):
                     cls(
                         "".join(cells[0]["source"]),
                         "".join(strip_metadata(cells[1]["source"])),
+                    ),
+                )
+        else:
+            return None
+
+
+class MarkdownPlotly(Star):
+    """A Markdown cell with an attached Plotly visual."""
+
+    star_type = "markdown_plotly"
+
+    def __init__(self, md, code, fig):
+        super().__init__()
+        self.md = md
+        self.code = code
+
+        if fig is None:
+            raise ValueError(f"Figure is null\nCode:\n{self.code}")
+        else:
+            self.fig = fig
+
+    def serialize(self):
+        obj = super().serialize()
+        obj["markdown"] = self.md
+        obj["plotly"] = self.code
+        obj["figure"] = self.fig
+
+        return obj
+
+    @classmethod
+    def parse(cls, cells):
+        if len(cells) >= 2 and (cells[0]["cell_type"], cells[1]["cell_type"]) == (
+            "markdown",
+            "code",
+        ):
+            if guess_plot_type(cells[1]) == PlotType.PLOTLY:
+                return (
+                    2,
+                    cls(
+                        "".join(cells[0]["source"]),
+                        "".join(strip_metadata(cells[1]["source"])),
+                        # if this figure doesn't exist, unlike Matplotlib/Panel
+                        # there's no clean way of saying "get the current figure
+                        # and plot it", so we're stuck. Not sure how we can
+                        # handle this, but for now you have to actually run
+                        # Plotly cells.
+                        cells[1]
+                        .get("outputs", [{}])[0]
+                        .get("data", {})
+                        .get("application/vnd.plotly.v1+json", None),
                     ),
                 )
         else:
@@ -253,5 +336,6 @@ NB_STARS = (
     MarkdownLatex,
     MarkdownMatplotlib,
     MarkdownPanel,
+    MarkdownPlotly,
     PureMarkdown,
 )

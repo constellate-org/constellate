@@ -1,5 +1,6 @@
 """Defines a Constellation, the outer-level container of a complete work of content."""
 from __future__ import annotations
+from collections import defaultdict
 
 import json
 import hashlib
@@ -7,39 +8,32 @@ import base64
 from copy import deepcopy
 from os import PathLike
 from pathlib import Path
-from typing import Sequence, Optional, Tuple, MutableMapping
+from typing import Mapping, Sequence, Optional, Tuple, MutableMapping
 from types import ModuleType
 import html
 import re
 from urllib.parse import quote
 
-from .star import NB_STARS, MarkdownMatplotlib, Star
+from .star import NB_STARS, MarkdownMatplotlib, Star, PlotType, guess_plot_type
 
 
 class Constellation:
     """A collection of Stars that combine to form a complete experience."""
 
     def __init__(
-        self,
-        setup_mpl: Sequence[str],
-        setup_panel: Sequence[str],
-        stars: Sequence[Star],
+        self, setup: Mapping[PlotType, Sequence[str]], stars: Sequence[Star],
     ):
         """Creates a Constellation.
 
         Parameters
         ----------
-        setup_mpl : Sequence[str]
-            List of setup code sources: these imports and constants are prepended to cells that
-            generate static images
-        setup_panel : Sequence[str]
-            List of setup code sources: these imports and constants are prepended to cells that
-            serve a Panel application
+        setup : Mapping[PlotType, Sequence[str]]
+            Maps plot types to lists of setup code blocks. The state after these code blocks are run is set up
+            before making plots with the given backend.
         stars : Sequence[Star]
             A list of Stars that comprise the webpage.
         """
-        self.setup_mpl = setup_mpl
-        self.setup_panel = setup_panel
+        self.setup = setup
         self.stars = stars
         self.title = "Constellation"
         self.ids: Sequence[str] = []
@@ -52,10 +46,9 @@ class Constellation:
         # Size of digest in base 64. 8 base64-encoded characters gives a collision would be expected
         # in sqrt(64 ^ 8) = 64 ^ 4 = 2 ^ 24 = 16,777,216 distinct encodes. I'll take those odds.
         HASH_SIZE = 8
+        setup_code = "".join(["".join(vals) for vals in self.setup.values()])
         for star in self.stars:
-            hasher = hashlib.sha1(
-                "".join([*self.setup_mpl, *self.setup_panel]).encode()
-            )
+            hasher = hashlib.sha1(setup_code.encode())
             # update with the value of non-markdown non-uuid, which is mainly source code
             for v in star.serialize().items():
                 hasher.update(str(v).encode())
@@ -141,10 +134,12 @@ class Constellation:
         """
         # run this twice, for two different themes
         SET_LIGHT = """
+IS_DARK = False
 plt.style.use(['rho', 'rho-light'])
 c1, c2, c3, c4, c5, c6, *cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
         """
         SET_DARK = """
+IS_DARK = True
 plt.style.use(['rho', 'rho-dark'])
 c1, c2, c3, c4, c5, c6, *cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
         """
@@ -235,7 +230,9 @@ plt.close('all')
 
         The names are tied to the UUID of the Star, but this may change in the future.
         """
-        new_global_state, global_mods = self._get_global_state(self.setup_mpl)
+        new_global_state, global_mods = self._get_global_state(
+            self.setup.get(PlotType.MATPLOTLIB, [])
+        )
         for star, star_id in zip(self.stars, self.ids):
             if star.star_type == "markdown_matplotlib":
                 self._run_matplotlib(star, star_id, new_global_state, global_mods)
@@ -250,7 +247,7 @@ plt.close('all')
         save_folder : PathLike
             The folder to save the code in. Then, you can use `panel serve` to run it.
         """
-        setup_code = "\n".join(self.setup_panel)
+        setup_code = "\n".join(self.setup.get(PlotType.PANEL, []))
         for star, star_id in zip(self.stars, self.ids):
             if star.star_type == "markdown_panel":
                 with open(Path(save_folder) / (star_id + ".py"), "w") as outfile:
@@ -281,8 +278,7 @@ plt.close('all')
         ValueError
             If there are problems parsing the notebook.
         """
-        setup_mpl_cells = []
-        setup_panel_cells = []
+        setup_cells = defaultdict(list)
         filtered_cells = []
         for cell in nb["cells"]:
             if "source" in cell and not cell["source"]:
@@ -295,10 +291,23 @@ plt.close('all')
                 rows = [x.strip().lower() for x in cell["source"]]
                 if any([row.startswith("#constellate: setup") for row in rows]):
                     print("Adding cell to setup")
-                    if "#constellate: setup-mpl" in rows:
-                        setup_mpl_cells.append("".join(cell["source"]))
-                    if "#constellate: setup-panel" in rows:
-                        setup_panel_cells.append("".join(cell["source"]))
+                    code = "".join(cell["source"])
+                    # if generic setup, apply to all cells
+                    setup_all = any(
+                        [row.strip().lower() == "#constellate: setup" for row in rows]
+                    )
+                    for type_ in PlotType:
+                        if (
+                            any(
+                                [
+                                    "#constellate: setup_" + type_.value.lower()
+                                    == row.strip().lower()
+                                    for row in rows
+                                ]
+                            )
+                            or setup_all
+                        ):
+                            setup_cells[type_].append(code)
                 else:
                     filtered_cells.append(cell)
 
@@ -322,12 +331,14 @@ plt.close('all')
 
         if curr_ind < len(filtered_cells):
             raise ValueError(
-                "Could not parse cell:\n{}".format(
-                    "".join(filtered_cells[curr_ind]["source"])
+                "Could not parse cell:\n{}\nPlot type:\n{}\nPrevious cell:\n{}".format(
+                    "".join(filtered_cells[curr_ind]["source"]),
+                    guess_plot_type(filtered_cells[curr_ind]),
+                    "".join(filtered_cells[curr_ind - 1]["source"]),
                 )
             )
 
-        return cls(setup_mpl_cells, setup_panel_cells, stars)
+        return cls(setup_cells, stars)
 
     @classmethod
     def from_ipynb_file(cls, filename: PathLike) -> Constellation:
@@ -360,9 +371,9 @@ plt.close('all')
                 for color_mode in ("light", "dark"):
                     star[color_mode] = self.mpl_images[f"{star_id}_{color_mode}"]
 
+        setup = {"setup_" + name.value: code for name, code in self.setup.items()}
         return {
-            "setup_mpl": self.setup_mpl,
-            "setup_panel": self.setup_panel,
+            **setup,
             "stars": stars,
             "breadcrumbs": self.breadcrumbs,
             "title": self.title,
