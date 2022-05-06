@@ -8,7 +8,7 @@ import base64
 from copy import deepcopy
 from os import PathLike
 from pathlib import Path
-from typing import Mapping, Sequence, Optional, Tuple, MutableMapping
+from typing import Mapping, Sequence, Tuple, MutableMapping
 from types import ModuleType
 import html
 import re

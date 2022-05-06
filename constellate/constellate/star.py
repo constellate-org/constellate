@@ -1,6 +1,13 @@
 """Defines Stars. A Star is a single page, part of a Constellation."""
 
 from enum import Enum
+from yapf.yapflib.yapf_api import FormatCode
+
+
+def fix_code(code: str) -> str:
+    """Formats code using YAPF."""
+    formatted, _ = FormatCode(code)
+    return formatted
 
 
 class Star:
@@ -127,7 +134,7 @@ class MarkdownPanel(Star):
     def __init__(self, md, code):
         super().__init__()
         self.md = md
-        self.code = code
+        self.code = fix_code(code)
 
     def serialize(self):
         obj = super().serialize()
@@ -162,7 +169,7 @@ class MarkdownMatplotlib(Star):
     def __init__(self, md, code):
         super().__init__()
         self.md = md
-        self.code = code
+        self.code = fix_code(code)
 
     def serialize(self):
         obj = super().serialize()
@@ -231,7 +238,7 @@ class MarkdownPlotly(Star):
     def __init__(self, md, code, fig):
         super().__init__()
         self.md = md
-        self.code = code
+        self.code = fix_code(code)
 
         if fig is None:
             raise ValueError(f"Figure is null\nCode:\n{self.code}")
@@ -283,7 +290,7 @@ class MarkdownCode(Star):
     def __init__(self, md, code, output):
         super().__init__()
         self.md = md
-        self.code = code
+        self.code = fix_code(code)
         self.output = output
 
     def serialize(self):
