@@ -4,7 +4,13 @@ from pathlib import Path
 import glob
 import os
 
+# con = Constellation.from_ipynb_file(
+#     "/home/nicholas/programs/constellations/metropolis-hastings/mcmc1.ipynb"
+# )
 con = Constellation.from_ipynb_file("/home/nicholas/programs/test/multivar.ipynb")
+# con = Constellation.from_ipynb_file(
+#     "/home/nicholas/programs/constellations/mcmc-in-action/real-world-bayes.ipynb"
+# )
 
 con._save_all_matplotlib()
 

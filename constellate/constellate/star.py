@@ -309,7 +309,7 @@ class MarkdownCode(Star):
             "markdown",
             "code",
         ):
-            if guess_plot_type(cells[1]) is None:
+            if guess_plot_type(cells[1]) is PlotType.PLAIN:
                 outs = cells[1]["outputs"]
                 if outs and "data" in outs[0] and "text/plain" in outs[0]["data"]:
                     output = outs[0]["data"]["text/plain"]
