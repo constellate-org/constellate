@@ -1,6 +1,7 @@
 """Defines Stars. A Star is a single page, part of a Constellation."""
 
 from enum import Enum
+from typing import Sequence, Union, Tuple
 from yapf.yapflib.yapf_api import FormatCode
 
 
@@ -122,7 +123,7 @@ def guess_plot_type(cell) -> PlotType:
         return PlotType.PLAIN
 
 
-def strip_metadata(code_src):
+def strip_metadata(code_src: Sequence[str]) -> Sequence[str]:
     return [x for x in code_src if not x.startswith("#constellate")]
 
 
@@ -287,21 +288,46 @@ class MarkdownCode(Star):
     star_type = "markdown_code"
     """A Star with Markdown and a code panel. Shows plaintext output if there is output."""
 
-    def __init__(self, md, code, output):
+    def __init__(self, md, code, output, lang):
         super().__init__()
         self.md = md
-        self.code = fix_code(code)
+        if lang in ("python", "py"):
+            self.code = fix_code(code)
+        else:
+            self.code = code
         self.output = output
+        self.lang = lang
 
     def serialize(self):
         obj = super().serialize()
         obj["markdown"] = self.md
         obj["code"] = self.code
+        obj["lang"] = self.lang
 
         if self.output is not None:
             obj["output"] = self.output
 
         return obj
+
+    @staticmethod
+    def detect_code_block(cell) -> Union[None, Tuple[Sequence[str], str]]:
+        """Determines if a Markdown cell is a single code block. If so, returns the source and language,
+        else returns None."""
+        if cell["cell_type"] != "markdown":
+            return None
+
+        # after removing comment lines, should just be a triple or quadruple backtick line
+        lines = cell["source"]
+        filtered_lines = strip_metadata(lines)
+        if (
+            len(filtered_lines) >= 2
+            and filtered_lines[0].startswith("```")
+            and filtered_lines[-1].startswith("```")
+        ):
+            lang = filtered_lines[0].strip().strip("`").lower()
+            return (filtered_lines[1:-1], lang)
+        else:
+            return None
 
     @classmethod
     def parse(cls, cells):
@@ -329,8 +355,15 @@ class MarkdownCode(Star):
                         "".join(cells[0]["source"]),
                         "".join(strip_metadata(cells[1]["source"])),
                         output,
+                        "python",
                     ),
                 )
+        elif len(cells) >= 2 and cells[0]["cell_type"] == "markdown":
+            src_lang = cls.detect_code_block(cells[1])
+            if src_lang is not None:
+                src, lang = src_lang
+                return (2, cls("".join(cells[0]["source"]), "".join(src), "", lang))
+            return None
         else:
             return None
 
