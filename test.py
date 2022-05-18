@@ -15,7 +15,7 @@ con = Constellation.from_ipynb_file(
     "/home/nicholas/programs/constellate/docs/constellate-tutorial.ipynb"
 )
 
-con._save_all_matplotlib()
+con.save_all()
 
 con.to_file(
     "/home/nicholas/programs/constellations/metropolis-hastings/mcmc.constellate.json"

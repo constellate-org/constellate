@@ -64,6 +64,7 @@ class PlotType(Enum):
     PANEL = "panel"
     PLOTLY = "plotly"
     PLAIN = "plain"
+    DATAFRAME = "dataframe"
 
 
 def guess_plot_type(cell) -> PlotType:
@@ -82,13 +83,13 @@ def guess_plot_type(cell) -> PlotType:
     code_src = cell["source"]
     line1 = code_src[0].strip().lower()
     if line1.startswith("#constellate: "):
-        return PlotType(line1.lstrip("#constellate: ").lower())
+        return PlotType(line1.replace("#constellate: ", "").split(" ")[0].lower())
     elif "outputs" in cell:
-        out_types = set()
+        out_types = {}
         for out in cell["outputs"]:
             if "data" in out:
                 for key in out["data"]:
-                    out_types.add(key)
+                    out_types[key] = out["data"][key]
 
         if (
             "application/javascript" in out_types
@@ -99,6 +100,10 @@ def guess_plot_type(cell) -> PlotType:
             return PlotType.MATPLOTLIB
         elif "application/vnd.plotly.v1+json" in out_types:
             return PlotType.PLOTLY
+        elif "text/plain" in out_types and "dataframe" in "".join(
+            out_types.get("text/html", [])
+        ):
+            return PlotType.DATAFRAME
 
     src = "".join(code_src)
 
@@ -155,7 +160,7 @@ class MarkdownPanel(Star):
                     2,
                     cls(
                         "".join(cells[0]["source"]),
-                        "".join(strip_metadata(cells[1]["source"])),
+                        fix_code("".join(strip_metadata(cells[1]["source"]))),
                     ),
                 )
         else:
@@ -190,7 +195,7 @@ class MarkdownMatplotlib(Star):
                     2,
                     cls(
                         "".join(cells[0]["source"]),
-                        "".join(strip_metadata(cells[1]["source"])),
+                        fix_code("".join(strip_metadata(cells[1]["source"]))),
                     ),
                 )
         else:
@@ -265,7 +270,7 @@ class MarkdownPlotly(Star):
                     2,
                     cls(
                         "".join(cells[0]["source"]),
-                        "".join(strip_metadata(cells[1]["source"])),
+                        fix_code("".join(strip_metadata(cells[1]["source"]))),
                         # if this figure doesn't exist, unlike Matplotlib/Panel
                         # there's no clean way of saying "get the current figure
                         # and plot it", so we're stuck. Not sure how we can
@@ -277,6 +282,54 @@ class MarkdownPlotly(Star):
                         .get("application/vnd.plotly.v1+json", None),
                     ),
                 )
+        else:
+            return None
+
+
+class MarkdownDataframe(Star):
+    star_type = "markdown_dataframe"
+    """A Star with Markdown and a Pandas DataFrame."""
+
+    def __init__(self, md, code, df_expr):
+        super().__init__()
+        self.md = md
+        self.code = code
+        self.df_expr = df_expr
+
+    def serialize(self):
+        obj = super().serialize()
+        obj["markdown"] = self.md
+        obj["code"] = self.code
+        obj["df_expr"] = self.df_expr
+
+        return obj
+
+    @classmethod
+    def parse(cls, cells):
+        if (
+            len(cells) >= 2
+            and (cells[0]["cell_type"], cells[1]["cell_type"]) == ("markdown", "code",)
+            and guess_plot_type(cells[1]) == PlotType.DATAFRAME
+        ):
+            df_expr = ""
+            for line in cells[1]["source"]:
+                if line.startswith("#constellate: dataframe"):
+                    df_expr = line.replace("#constellate: dataframe", "").strip()
+
+            if not df_expr:
+                # no explicit name was given, use last non-empty line
+                for line in reversed(cells[1]["source"]):
+                    if line.strip():
+                        df_expr = line.strip()
+                        break
+            return (
+                2,
+                cls(
+                    "".join(cells[0]["source"]),
+                    fix_code("".join(strip_metadata(cells[1]["source"]))),
+                    df_expr,
+                ),
+            )
         else:
             return None
 
@@ -377,5 +430,6 @@ NB_STARS = (
     MarkdownMatplotlib,
     MarkdownPanel,
     MarkdownPlotly,
+    MarkdownDataframe,
     PureMarkdown,
 )

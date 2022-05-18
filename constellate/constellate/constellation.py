@@ -136,14 +136,15 @@ class Constellation:
         SET_LIGHT = """
 IS_DARK = False
 plt.style.use(['rho', 'rho-light'])
-c1, c2, c3, c4, c5, c6, *cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
+cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
+(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
         """
         SET_DARK = """
 IS_DARK = True
 plt.style.use(['rho', 'rho-dark'])
-c1, c2, c3, c4, c5, c6, *cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
+cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
+(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
         """
-        print(star.code)
         for color_mode, setup in zip(("light", "dark"), (SET_LIGHT, SET_DARK)):
             scope = deepcopy(global_state)
             scope.update(global_mods)
@@ -226,7 +227,7 @@ plt.close('all')
         return (new_global_state, global_mods)
 
     def _save_all_matplotlib(self):
-        """Saves all of the images in the Constellation to the folder.
+        """Renders the Matplotlib figures.
 
         The names are tied to the UUID of the Star, but this may change in the future.
         """
@@ -258,6 +259,30 @@ plt.close('all')
                     outfile.write("\n\n")
                     outfile.write(star.code)
         print("Done serializing Panel servers")
+
+    def _save_all_dataframe(self):
+        """Saves all DataFrame data to the Constellation."""
+        new_global_state, global_mods = self._get_global_state(
+            self.setup.get(PlotType.DATAFRAME, [])
+        )
+
+        for star in self.stars:
+            if star.star_type == "markdown_dataframe":
+                scope = deepcopy(new_global_state)
+                scope.update(global_mods)
+                exec(star.code, scope)
+
+                star.df_json = json.loads(
+                    eval(
+                        f"({star.df_expr}).to_json(orient='records', force_ascii=False, double_precision=4, date_format='iso')",
+                        scope,
+                    )
+                )
+
+    def save_all(self):
+        """Runs all of the methods required to prepare a Constellation for export. Does not prepare Panel servers."""
+        self._save_all_matplotlib()
+        self._save_all_dataframe()
 
     @classmethod
     def from_ipynb_model(cls, nb: dict) -> Constellation:
@@ -364,12 +389,20 @@ plt.close('all')
 
     def serialize(self) -> dict:
         stars = [star.serialize() for star in self.stars]
-        for star, star_id in zip(stars, self.ids):
+        for star, star_obj, star_id in zip(stars, self.stars, self.ids):
             star["star_id"] = star_id
 
             if star["kind"] == "markdown_matplotlib":
                 for color_mode in ("light", "dark"):
                     star[color_mode] = self.mpl_images[f"{star_id}_{color_mode}"]
+            elif star["kind"] == "markdown_dataframe":
+                if not hasattr(star_obj, "df_json"):
+                    print(
+                        "You're serializing a Constellation without serializing the Pandas DataFrames."
+                    )
+                star["df_json"] = (
+                    star_obj.df_json if hasattr(star_obj, "df_json") else {}
+                )
 
         setup = {"setup_" + name.value: code for name, code in self.setup.items()}
         return {
