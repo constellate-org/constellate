@@ -8,12 +8,17 @@ import panel as pn
 
 con_files = (
     "/home/nicholas/programs/test/multivar.ipynb",
+    "/home/nicholas/programs/constellations/metropolis-hastings/mcmc1.ipynb",
     "/home/nicholas/programs/constellations/mcmc-in-action/real-world-bayes.ipynb",
     "/home/nicholas/programs/constellate/docs/constellate-intro.ipynb",
     "/home/nicholas/programs/constellate/docs/constellate-tutorial.ipynb",
 )
 
 panel_objects = {}
+panel_path = Path("/home/nicholas/programs/constellate-server/panel-servers/")
+py_files = glob.glob(str(panel_path / "*.py"))
+for py_file in py_files:
+    os.remove(py_file)
 
 for con_file in con_files:
     con: Constellation = Constellation.from_ipynb_file(con_file)
@@ -23,12 +28,7 @@ for con_file in con_files:
     con.to_file(
         f"/home/nicholas/programs/constellate-server/public/constellations/{con_slug}.constellate.json"
     )
-
-    # panel_path = Path("/home/nicholas/programs/constellate-server/panel-servers/")
-    # py_files = glob.glob(str(panel_path / "*.py"))
-    # for py_file in py_files:
-    #     os.remove(py_file)
-    # con._save_all_panel(panel_path)
+    con._save_all_panel(panel_path)
 
     for star_id, code in con.panel_code().items():
         print(star_id, "\n", code)
@@ -49,11 +49,11 @@ for con_file in con_files:
 #     print(k, v())
 #     print(v() is v() or v() == v())
 
-pn.serve(
-    panel_objects,
-    port=5006,
-    address="localhost",
-    show=False,
-    start=True,
-    websocket_origin="*",
-)
+# pn.serve(
+#     panel_objects,
+#     port=5006,
+#     address="localhost",
+#     show=False,
+#     start=True,
+#     websocket_origin="*",
+# )

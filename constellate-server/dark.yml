@@ -1,0 +1,32 @@
+attrs:
+    Figure:
+        background_fill_color: '#25262e'
+        border_fill_color: '#25262e00'
+        outline_line_color: '#343741'
+    Axis:
+      axis_line_color: "#25262e"
+      major_tick_line_color: "#535966"
+      major_label_text_color: "#98A2B3"
+      minor_tick_line_color: "#535966"
+      axis_label_text_font: "myriad-pro-semi-condensed"
+      axis_label_text_font_style: "normal"
+      axis_label_text_color: "#98A2B3"
+      axis_label_text_font_size: "16px"
+    Grid:
+        grid_line_alpha: 0
+        grid_line_color: "#25262e"
+    Title:
+        text_color: "#d4dae5"
+        text_font: "myriad-pro-semi-condensed"
+        text_font_style: "normal"
+        text_font_size: "20px"
+    Label:
+      text_color: '#d4dae5'
+    Legend:
+      label_text_font: "myriad-pro-semi-condensed"
+      background_fill_color: "#535966"
+      background_fill_alpha: 0.25
+      label_text_color: "white"
+      title_text_color: "white"
+      title_text_font_style: "normal"
+      border_line_alpha: 0

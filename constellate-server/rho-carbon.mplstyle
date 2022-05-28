@@ -1,0 +1,38 @@
+axes.prop_cycle: cycler('color', ['6929c4', '1192e8', '005d5d', '9f1853', 'fa4d56', '570408', '198038'])
+axes.spines.left: True
+axes.spines.bottom: True
+axes.spines.top: False
+axes.spines.right: False
+axes.facecolor: ffffff
+axes.edgecolor: 525252
+axes.linewidth: 0.5
+axes.axisbelow: True
+axes.grid: False
+axes.grid.axis: both
+axes.grid.which: major
+axes.titlesize: x-large
+axes.titlelocation: center
+axes.titleweight: 400
+axes.titlecolor: 161616
+axes.labelsize: large
+axes.labelpad: 4
+axes.labelweight: 400
+axes.labelcolor: 161616
+figure.titlesize: xx-large
+figure.titleweight: 400
+figure.figsize: 12, 7
+figure.facecolor: ffffff
+figure.edgecolor: 525252
+figure.frameon: False
+font.family: sans-serif
+font.sans-serif: Myriad Pro
+font.style: normal
+font.weight: 400
+font.size: 12
+grid.linestyle: -
+grid.linewidth: 0.5
+grid.color: 8d8d8d
+patch.edgecolor: 161616
+patch.linewidth: 0.5
+lines.markeredgewidth: 3
+lines.markeredgecolor: black

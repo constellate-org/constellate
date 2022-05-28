@@ -6,10 +6,21 @@ authors = ["Nicholas Miklaucic <nicholas.miklaucic@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 yapf = "^0.32.0"
+click-log = "^0.4.0"
+python-slugify = "^6.1.2"
 
 [tool.poetry.dev-dependencies]
+numpy = "^1.22.4"
+matplotlib = "^3.5.2"
+pandas = "^1.4.2"
+colorcet = "^3.0.0"
+seaborn = "^0.11.2"
+panel = "^0.13.1"
+
+[tool.poetry.scripts]
+constellate = 'constellate.cli.app:cli'
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

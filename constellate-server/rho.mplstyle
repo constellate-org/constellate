@@ -1,0 +1,39 @@
+# Based on the colors from BlueprintJS, matching the background/foreground of Elastic UI.
+
+axes.labelsize: large
+axes.axisbelow: false
+axes.grid: false
+axes.linewidth: 3.0
+axes.spines.right: false
+axes.spines.top: false
+axes.titlesize: x-large
+axes.titleweight: 400
+figure.titlesize: xx-large
+figure.titleweight: 700
+
+patch.linewidth: 0.5
+
+lines.linewidth: 2.5
+
+svg.fonttype: path
+
+grid.linestyle: -
+grid.linewidth: 1.0
+
+xtick.major.size: 0
+xtick.minor.size: 0
+ytick.major.size: 0
+ytick.minor.size: 0
+
+font.family: sans-serif
+mathtext.fontset: cm
+font.sans-serif: Myriad Pro SemiCond, Myriad Pro, serif;
+axes.unicode_minus: false
+font.size:16
+
+savefig.dpi: 600
+
+figure.subplot.left: 0.08
+figure.subplot.right: 0.95
+figure.subplot.bottom: 0.07
+figure.figsize: 12, 7

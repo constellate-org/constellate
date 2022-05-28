@@ -1,0 +1,3 @@
+[submodule "constellate-server"]
+	path = constellate-server
+	url = https://github.com/constellate-org/constellate-server

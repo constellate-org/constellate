@@ -1,0 +1,8 @@
+matplotlib
+pandas
+numpy
+scipy
+seaborn
+bokeh
+panel
+colorcet

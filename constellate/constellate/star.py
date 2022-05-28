@@ -4,6 +4,12 @@ from enum import Enum
 from typing import Sequence, Union, Tuple
 from yapf.yapflib.yapf_api import FormatCode
 
+import logging
+import click_log
+
+logger = logging.getLogger(__name__)
+click_log.basic_config(logger)
+
 
 def fix_code(code: str) -> str:
     """Formats code using YAPF."""
@@ -395,7 +401,7 @@ class MarkdownCode(Star):
                 elif outs and "name" in outs[0] and outs[0]["name"] == "stdout":
                     output = outs[0]["text"]
                 else:
-                    print(
+                    logger.warn(
                         "No output. Is that really what you wanted? Cell source:\n{}".format(
                             "".join(cells[1]["source"])
                         )

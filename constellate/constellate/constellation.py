@@ -14,6 +14,12 @@ import html
 import re
 from urllib.parse import quote
 
+import logging
+import click_log
+
+logger = logging.getLogger(__name__)
+click_log.basic_config(logger)
+
 from slugify.slugify import slugify
 
 from .star import NB_STARS, MarkdownMatplotlib, Star, PlotType, guess_plot_type
@@ -262,7 +268,7 @@ plt.close('all')
                     outfile.write(setup_code)
                     outfile.write("\n\n")
                     outfile.write(star.code)
-        print("Done serializing Panel servers")
+        logger.debug("Done serializing Panel servers")
 
     def panel_code(self) -> Mapping[str, str]:
         """Returns a mapping from star ID to code that generates the Panel object to serve."""
@@ -333,7 +339,7 @@ plt.close('all')
             else:
                 rows = [x.strip().lower() for x in cell["source"]]
                 if any([row.startswith("#constellate: setup") for row in rows]):
-                    print("Adding cell to setup")
+                    logger.debug("Adding cell to setup")
                     code = "".join(cell["source"])
                     # if generic setup, apply to all cells
                     setup_all = any(
@@ -415,7 +421,7 @@ plt.close('all')
                     star[color_mode] = self.mpl_images[f"{star_id}_{color_mode}"]
             elif star["kind"] == "markdown_dataframe":
                 if not hasattr(star_obj, "df_json"):
-                    print(
+                    logger.warn(
                         "You're serializing a Constellation without serializing the Pandas DataFrames."
                     )
                 star["df_json"] = (
