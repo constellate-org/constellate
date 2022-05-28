@@ -12,26 +12,26 @@ import {
   EuiPanel,
   EuiText,
   useEuiTheme,
-} from '@elastic/eui';
-import Image from 'next/image';
-import themes from '../../public/constellate_themes/themes';
-import { Constellation } from '../lib/constellate';
-import glob from 'glob';
-import path from 'path';
-import { readFileSync } from 'fs';
-import { useRouter } from 'next/router';
-import Head from 'next/head';
-import ThemeSwitcher from '../components/rho/theme_switcher';
-import Shortcuts from '../components/hotkeys';
-import indexStyles from '../styles/index.styles';
+} from "@elastic/eui";
+import Image from "next/image";
+import themes from "../../public/constellate_themes/themes";
+import { Constellation } from "../lib/constellate";
+import glob from "glob";
+import path from "path";
+import { readFileSync } from "fs";
+import { useRouter } from "next/router";
+import Head from "next/head";
+import ThemeSwitcher from "../components/rho/theme_switcher";
+import Shortcuts from "../components/hotkeys";
+import indexStyles from "../styles/index.styles";
 const theme = themes[process.env.CONSTELLATE_THEME];
 
 function findImage(constellation: Constellation, colorMode: string, styles) {
-  let url = '';
-  const hasNoImg = constellation.stars.every(star => {
+  let url = "";
+  const hasNoImg = constellation.stars.every((star) => {
     switch (star.kind) {
-      case 'markdown_matplotlib': {
-        if (colorMode.toLocaleLowerCase() === 'light') {
+      case "markdown_matplotlib": {
+        if (colorMode.toLocaleLowerCase() === "light") {
           url = star.light;
         } else {
           url = star.dark;
@@ -103,12 +103,13 @@ function IndexPage({ constellations }) {
         template="empty"
         fullHeight={true}
         restrictWidth={false}
-        className="page-grow">
+        className="page-grow"
+      >
         <EuiHeader position="fixed">
           <EuiHeaderSection side="left">
             <EuiHeaderSectionItem>
-              <EuiHeaderLogo iconType={theme['site_logo']}>
-                {theme['site_title']}
+              <EuiHeaderLogo iconType={theme["site_logo"]}>
+                {theme["site_title"]}
               </EuiHeaderLogo>
             </EuiHeaderSectionItem>
           </EuiHeaderSection>
@@ -143,12 +144,12 @@ export async function getStaticProps() {
 
   const constellations = {};
   glob
-    .sync(path.join(process.cwd(), 'public/constellations/*.constellate.json'))
+    .sync(path.join(process.cwd(), "public/constellations/*.constellate"))
     .forEach((fn: string) => {
-      const data = JSON.parse(readFileSync(fn, 'utf8'));
+      const data = JSON.parse(readFileSync(fn, "utf8"));
       // @ts-ignore
       const constellation: Constellation = data;
-      const slug = fn.split('/').reverse()[0].split('.')[0];
+      const slug = fn.split("/").reverse()[0].split(".")[0];
       constellations[slug] = constellation;
     });
 
