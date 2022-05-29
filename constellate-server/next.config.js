@@ -120,7 +120,11 @@ const nextConfig = {
   },
 };
 
-nextConfig.env.CONSTELLATE_THEME = require('dotenv').config({ path: `./.env.custom.local` }).parsed.CONSTELLATE_THEME || nextConfig.env.CONSTELLATE_THEME;
+const parsed = require('dotenv').config({ path: `./.env.custom.local` }).parsed
+
+if (parsed) {
+  nextConfig.env.CONSTELLATE_THEME = parsed.CONSTELLATE_THEME;
+}
 
 /**
  * Enhances the Next config with the ability to:
