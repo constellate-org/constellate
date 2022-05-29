@@ -22,7 +22,7 @@ const pathPrefix = usePathPrefix ? derivePathPrefix() : '';
 const themeConfig = buildThemeConfig();
 
 const nextConfig = {
-  /** Disable the `X-Powered-By: Next.js` response header. */
+  /** Disable the `X- Powered - By: Next.js` response header. */
   poweredByHeader: false,
 
   experimental: {
@@ -58,6 +58,7 @@ const nextConfig = {
     PANEL_URL: 'http://127.0.0.1:5006',
     PLOTLY_LIGHT_TEMPLATE: 'none',
     PLOTLY_DARK_TEMPLATE: 'plotly_dark',
+    CONSTELLATE_THEME: process.env.CONSTELLATE_THEME,
   },
 
   /**
@@ -119,6 +120,8 @@ const nextConfig = {
   },
 };
 
+nextConfig.env.CONSTELLATE_THEME = require('dotenv').config({ path: `./.env.custom.local` }).parsed.CONSTELLATE_THEME || nextConfig.env.CONSTELLATE_THEME;
+
 /**
  * Enhances the Next config with the ability to:
  * - Analyze the webpack bundle
@@ -138,7 +141,7 @@ module.exports = withBundleAnalyzer({
  * themes will be fetched.
  *
  * The `availableThemes` key is used in the app to includes the themes in
- * the app's `<head>` element, and for theme switching.
+ * the app's `< head > ` element, and for theme switching.
  *
  * @return {ThemeConfig}
  */

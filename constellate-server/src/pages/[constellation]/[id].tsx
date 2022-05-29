@@ -68,7 +68,6 @@ function StarPage({ constellations }) {
             uuid={uuid}
             slug={constellation.slug}
             panelUrl={process.env.PANEL_URL}
-            panelSubdomain={process.env.PANEL_SUBDOMAIN}
             isDark={colorMode === "DARK"}
           />
         </EuiResizablePanel>
