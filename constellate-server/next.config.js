@@ -58,7 +58,7 @@ const nextConfig = {
     PANEL_URL: 'http://127.0.0.1:5006',
     PLOTLY_LIGHT_TEMPLATE: 'none',
     PLOTLY_DARK_TEMPLATE: 'plotly_dark',
-    CONSTELLATE_THEME: process.env.CONSTELLATE_THEME,
+    CONSTELLATE_THEME: 'default',
   },
 
   /**
