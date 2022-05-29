@@ -1,14 +1,14 @@
-import React from 'react';
-import { EuiSideNav, htmlIdGenerator } from '@elastic/eui';
+import React from "react";
+import { EuiSideNav, htmlIdGenerator } from "@elastic/eui";
 
-import type { Constellation } from '../lib/constellate';
+import type { Constellation } from "../lib/constellate";
 
-import { appendIconComponentCache } from '@elastic/eui/es/components/icon/icon';
+import { appendIconComponentCache } from "@elastic/eui/es/components/icon/icon";
 
-import { icon as ad } from '@elastic/eui/es/components/icon/assets/arrow_down';
-import { icon as ar } from '@elastic/eui/es/components/icon/assets/arrow_right';
-import { icon as menu } from '@elastic/eui/es/components/icon/assets/menu';
-import { icon as apps } from '@elastic/eui/es/components/icon/assets/apps';
+import { icon as ad } from "@elastic/eui/es/components/icon/assets/arrow_down";
+import { icon as ar } from "@elastic/eui/es/components/icon/assets/arrow_right";
+import { icon as menu } from "@elastic/eui/es/components/icon/assets/menu";
+import { icon as apps } from "@elastic/eui/es/components/icon/assets/apps";
 
 // One or more icons are passed in as an object of iconKey (string): IconComponent
 appendIconComponentCache({
@@ -37,7 +37,7 @@ class SideBarClass extends React.Component<{
         // if only one parent, then it's a new outer-level section
         const crumb = {
           name: titles[i],
-          id: htmlIdGenerator('bc')(),
+          id: htmlIdGenerator("bc")(),
           items: [],
           href: `/star/${i}`,
         };
@@ -47,13 +47,13 @@ class SideBarClass extends React.Component<{
       } else if (bc.length > 1) {
         const parent_id = stars[bc[bc.length - 1]].star_id;
         let crumb;
-        if (titles[i] !== '') {
+        if (titles[i] !== "") {
           // node page: add into correct area
           crumb = {
             name: titles[i],
-            id: htmlIdGenerator('bc')(),
+            id: htmlIdGenerator("bc")(),
             items: [],
-            href: `/star/${i}`,
+            href: `/${this.props.constellation.slug}/${i}`,
           };
           ids_to_crumbs[parent_id].items.push(crumb);
         } else {
@@ -83,8 +83,8 @@ class SideBarClass extends React.Component<{
           items={[
             {
               name: this.props.constellation.title,
-              href: '/star/1',
-              id: htmlIdGenerator('bc')(),
+              href: `/${this.props.constellation.slug}/1`,
+              id: htmlIdGenerator("bc")(),
               // @ts-ignore
               items: crumbs,
             },
