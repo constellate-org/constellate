@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   withEuiTheme,
   WithEuiThemeProps,
@@ -9,10 +9,11 @@ import {
   shade,
   tint,
   useEuiFontSize,
-} from '@elastic/eui';
-import { css, Global } from '@emotion/react';
-import { light_css, dark_css } from './code_block_themes';
-import themes from '../../public/constellate_themes/themes';
+} from "@elastic/eui";
+import { css, Global } from "@emotion/react";
+import { light_css, dark_css } from "./code_block_themes";
+import themes from "../../public/constellate_themes/themes";
+import panelThemes from "./panel_overrides";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
@@ -21,7 +22,7 @@ export default function CustomStyling() {
   let t = euiTheme;
 
   let primaryBg, accentBg, colors;
-  if (colorMode == 'DARK') {
+  if (colorMode == "DARK") {
     primaryBg = transparentize(t.colors.primary, 0.6);
     accentBg = transparentize(t.colors.accent, 0.6);
     colors = dark_css;
@@ -33,6 +34,8 @@ export default function CustomStyling() {
 
   const styles = css`
         ${colors}
+
+    ${panelThemes(t)}
 
     html {
       font-feature-settings: ${t.font.featureSettings};
@@ -51,7 +54,7 @@ export default function CustomStyling() {
         #textContent {
         border-color: ${t.colors.lightShade};
         font-family: ${theme.text_font || t.font.family};
-        ${useEuiFontSize('l').fontSize}
+        ${useEuiFontSize("l").fontSize}
     }
 
     #textContent h1, #textContent h2, #textContent h3, #textContent h4 {

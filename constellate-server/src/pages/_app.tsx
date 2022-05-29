@@ -1,16 +1,16 @@
-import { FunctionComponent } from 'react';
-import { AppProps } from 'next/app';
-import Head from 'next/head';
-import { EuiErrorBoundary } from '@elastic/eui';
-import { Global } from '@emotion/react';
-import { Theme } from '../components/theme';
-import Rho from '../components/rho';
-import ThemedOverrides from '../styles/themed_overrides';
-import 'katex/dist/katex.min.css';
-import globalStyles from '../styles/global.styles';
-import footnotesStyles from '../styles/footnotes.styles';
-import themes from '../../public/constellate_themes/themes';
-import Script from 'next/script';
+import { FunctionComponent } from "react";
+import { AppProps } from "next/app";
+import Head from "next/head";
+import { EuiErrorBoundary } from "@elastic/eui";
+import { Global } from "@emotion/react";
+import { Theme } from "../components/theme";
+import Rho from "../components/rho";
+import ThemedOverrides from "../styles/themed_overrides";
+import "katex/dist/katex.min.css";
+import globalStyles from "../styles/global.styles";
+import footnotesStyles from "../styles/footnotes.styles";
+import themes from "../../public/constellate_themes/themes";
+import Script from "next/script";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
@@ -25,7 +25,7 @@ const EuiApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
   <>
     <Head>
       {/* You can override this in other pages - see index.tsx for an example */}
-      <title>{theme['site_title']}</title>
+      <title>{theme["site_title"]}</title>
     </Head>
     <Script
       type="module"
@@ -35,7 +35,7 @@ const EuiApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
     />
     <Global styles={globalStyles} />
     <Global styles={footnotesStyles} />
-    <Global styles={theme['global']} />
+    <Global styles={theme["global"]} />
     {theme.HEAD}
     <Theme>
       <Rho>

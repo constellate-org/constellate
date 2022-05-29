@@ -30,3 +30,6 @@ out
 tsconfig.tsbuildinfo
 
 .log
+
+# secret config files
+.env*.local
