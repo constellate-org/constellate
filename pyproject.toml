@@ -10,6 +10,7 @@ python = "^3.8"
 yapf = "^0.32.0"
 click-log = "^0.4.0"
 python-slugify = "^6.1.2"
+rho-plus = "^0.1.1"
 
 [tool.poetry.dev-dependencies]
 numpy = "^1.22.4"

@@ -144,15 +144,15 @@ class Constellation:
         """
         # run this twice, for two different themes
         SET_LIGHT = """
+import rho_plus
 IS_DARK = False
-plt.style.use(['rho', 'rho-light'])
-cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
+cs = rho_plus.mpl_setup(IS_DARK)
 (c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
         """
         SET_DARK = """
+import rho_plus
 IS_DARK = True
-plt.style.use(['rho', 'rho-dark'])
-cs = plt.rcParams['axes.prop_cycle'].by_key()['color']
+cs = rho_plus.mpl_setup(IS_DARK)
 (c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
         """
         for color_mode, setup in zip(("light", "dark"), (SET_LIGHT, SET_DARK)):

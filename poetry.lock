@@ -425,6 +425,14 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
 
 [[package]]
+name = "rho-plus"
+version = "0.1.1"
+description = "Aesthetic and ergonomic enhancements to common Python data science tools"
+category = "main"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[[package]]
 name = "scipy"
 version = "1.6.1"
 description = "SciPy: Scientific Library for Python"
@@ -577,7 +585,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "5c10e162e862ab4a07aac8020ca590a6d32dc0c180cb1777cd98fffc4e58f910"
+content-hash = "9c5775ce0f9eea81703d996ce110a3849a4a3a9fb9d93117239dd9fd430851b0"
 
 [metadata.files]
 bleach = [
@@ -925,6 +933,10 @@ pyyaml = [
 requests = [
     {file = "requests-2.27.1-py2.py3-none-any.whl", hash = "sha256:f22fa1e554c9ddfd16e6e41ac79759e17be9e492b3587efa038054674760e72d"},
     {file = "requests-2.27.1.tar.gz", hash = "sha256:68d7c56fd5a8999887728ef304a6d12edc7be74f1cfa47714fc8b414525c9a61"},
+]
+rho-plus = [
+    {file = "rho_plus-0.1.1-py3-none-any.whl", hash = "sha256:e25a1502adbaea89188b0777ff1dec351bafd041e0fc4ea2e61b204d84de05cb"},
+    {file = "rho_plus-0.1.1.tar.gz", hash = "sha256:5e07deb71db5dc4e05482d79abefe5b822e4908fbdd79a0100532c35e650bb89"},
 ]
 scipy = [
     {file = "scipy-1.6.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:a15a1f3fc0abff33e792d6049161b7795909b40b97c6cc2934ed54384017ab76"},
