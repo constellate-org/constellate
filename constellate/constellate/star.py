@@ -3,6 +3,7 @@
 from enum import Enum
 from typing import Sequence, Union, Tuple
 from yapf.yapflib.yapf_api import FormatCode
+import json
 
 import logging
 import click_log
@@ -71,6 +72,8 @@ class PlotType(Enum):
     PLOTLY = "plotly"
     PLAIN = "plain"
     DATAFRAME = "dataframe"
+    WIDGET = "widget"
+    VEGA = "vega"
 
 
 def guess_plot_type(cell) -> PlotType:
@@ -80,11 +83,11 @@ def guess_plot_type(cell) -> PlotType:
     # the output: PNGs are assumed to be matplotlib, JS is an interactive Panel
     # figure, etc.
 
-    # The only downside here is that it requires that you ran the entire
-    # notebook before Constellating it. So we basically try for extra credit in
-    # those scenarios, guessing based on common library abbreviations. This
-    # isn't a good system, but it's just to smooth over some of the rough edges
-    # of usability and shouldn't be relied upon.
+    # The only downside to using outputs is that it requires that you ran the
+    # entire notebook before Constellating it. So we basically try for extra
+    # credit in those scenarios, guessing based on common library abbreviations.
+    # This isn't a good system, but it's just to smooth over some of the rough
+    # edges of usability and shouldn't be relied upon.
 
     code_src = cell["source"]
     line1 = code_src[0].strip().lower()
@@ -106,10 +109,25 @@ def guess_plot_type(cell) -> PlotType:
             return PlotType.MATPLOTLIB
         elif "application/vnd.plotly.v1+json" in out_types:
             return PlotType.PLOTLY
-        elif "text/plain" in out_types and "dataframe" in "".join(
-            out_types.get("text/html", [])
-        ):
-            return PlotType.DATAFRAME
+        elif "application/vnd.vegalite.v4+json" in out_types:
+            return PlotType.VEGA
+        elif "text/plain" in out_types and "text/html" in out_types:
+            # we can guess for some HTML outputs: the class dataframe is used
+            # for Pandas DFs, and vegaEmbed is used in Vega code.
+            html = "".join(out_types["text/html"])
+            keywords = {
+                PlotType.VEGA: ("vegaEmbed",),
+                PlotType.DATAFRAME: ("dataframe",),
+            }
+            found_kws = []
+            for plot_type, kws in keywords.items():
+                if any([kw in html for kw in kws]):
+                    found_kws.append(plot_type)
+
+            if len(found_kws) == 1:
+                return found_kws[0]
+            else:
+                return PlotType.PLAIN
 
     src = "".join(code_src)
 
@@ -246,6 +264,127 @@ class MarkdownPlotly(Star):
     """A Markdown cell with an attached Plotly visual."""
 
     star_type = "markdown_plotly"
+
+    def __init__(self, md, code, fig):
+        super().__init__()
+        self.md = md
+        self.code = fix_code(code)
+
+        if fig is None:
+            raise ValueError(f"Figure is null\nCode:\n{self.code}")
+        else:
+            self.fig = fig
+
+    def serialize(self):
+        obj = super().serialize()
+        obj["markdown"] = self.md
+        obj["plotly"] = self.code
+        obj["figure"] = self.fig
+
+        return obj
+
+    @classmethod
+    def parse(cls, cells):
+        if len(cells) >= 2 and (cells[0]["cell_type"], cells[1]["cell_type"]) == (
+            "markdown",
+            "code",
+        ):
+            if guess_plot_type(cells[1]) == PlotType.PLOTLY:
+                return (
+                    2,
+                    cls(
+                        "".join(cells[0]["source"]),
+                        fix_code("".join(strip_metadata(cells[1]["source"]))),
+                        # if this figure doesn't exist, unlike Matplotlib/Panel
+                        # there's no clean way of saying "get the current figure
+                        # and plot it", so we're stuck. Not sure how we can
+                        # handle this, but for now you have to actually run
+                        # Plotly cells.
+                        cells[1]
+                        .get("outputs", [{}])[0]
+                        .get("data", {})
+                        .get("application/vnd.plotly.v1+json", None),
+                    ),
+                )
+        else:
+            return None
+
+
+class MarkdownVega(Star):
+    """A Markdown cell with an Altair Vega chart."""
+
+    star_type = "markdown_vega"
+
+    def __init__(self, md, code, chart_html=None, chart_json=None):
+        super().__init__()
+        self.md = md
+        self.code = fix_code(code)
+
+        if chart_html is None and chart_json is None:
+            raise ValueError("Vega cell has invalid output. Cell: {}\n".format(code))
+        elif chart_html is not None:
+            self.chart = json.loads(self.parse_chart_html(chart_html))
+        else:
+            self.chart = chart_json
+
+    def serialize(self):
+        obj = super().serialize()
+        obj["markdown"] = self.md
+        obj["vega"] = self.code
+        obj["chart"] = self.chart
+        return obj
+
+    @staticmethod
+    def parse_chart_html(html):
+        """Gets the Vega chart from HTML output and returns a JSON string."""
+        # so there's no easy way to do this, we just kinda have to guess based on the HTML
+        # this may very well break with different Vega charts/versions
+        # the last line is the ending script tag, we get the object passed to there
+        try:
+            penultimate = html[-2].strip()
+            spec = penultimate.split("})", maxsplit=1)[1]
+            # remove ); at end and ,{"mode": "vega-lite"} at end
+            spec: str = spec[1:]
+            spec = spec.rsplit(",", maxsplit=1)[0]
+            return spec
+        except (IndexError, ValueError) as e:
+            raise e
+
+    @classmethod
+    def parse(cls, cells):
+        if len(cells) >= 2 and (cells[0]["cell_type"], cells[1]["cell_type"]) == (
+            "markdown",
+            "code",
+        ):
+            if guess_plot_type(cells[1]) == PlotType.VEGA:
+                return (
+                    2,
+                    cls(
+                        "".join(cells[0]["source"]),
+                        "".join(strip_metadata(cells[1]["source"])),
+                        # if this figure doesn't exist, unlike Matplotlib/Panel
+                        # there's no clean way of saying "get the current figure
+                        # and plot it", so we're stuck. Not sure how we can
+                        # handle this, but for now you have to actually run
+                        # Plotly cells.
+                        cells[1]
+                        .get("outputs", [{}])[0]
+                        .get("data", {})
+                        .get("text/html", None),
+                        cells[1]
+                        .get("outputs", [{}])[0]
+                        .get("data", {})
+                        .get("application/vnd.vegalite.v4+json", None),
+                    ),
+                )
+        else:
+            return None
+
+
+class MarkdownWidget(Star):
+    """A Markdown cell with an attached ipywidget visual."""
+
+    star_type = "markdown_widget"
 
     def __init__(self, md, code, fig):
         super().__init__()
@@ -436,6 +575,7 @@ NB_STARS = (
     MarkdownMatplotlib,
     MarkdownPanel,
     MarkdownPlotly,
+    MarkdownVega,
     MarkdownDataframe,
     PureMarkdown,
 )

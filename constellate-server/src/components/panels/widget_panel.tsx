@@ -1,7 +1,7 @@
-import { UseEuiTheme, withEuiTheme } from '@elastic/eui';
-import { polyfill } from 'interweave-ssr';
-import React from 'react';
-import widgetPanelStyles from './widget_panel.styles';
+import { UseEuiTheme, withEuiTheme } from "@elastic/eui";
+import { polyfill } from "interweave-ssr";
+import React from "react";
+import widgetPanelStyles from "./widget_panel.styles";
 
 polyfill();
 

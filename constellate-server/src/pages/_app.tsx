@@ -11,6 +11,7 @@ import globalStyles from "../styles/global.styles";
 import footnotesStyles from "../styles/footnotes.styles";
 import themes from "../../public/constellate_themes/themes";
 import Script from "next/script";
+import Link from "next/link";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
@@ -33,6 +34,8 @@ const EuiApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
       integrity="sha384-+gSYJ3yzY30+a6FGYJXOx9swmWs5oPKEi1AeCsAxsLexABlUXgHXkOkEZCj0Lz8U"
       crossOrigin="anonymous"
     />
+    {/* <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <Script defer src="https://pyscript.net/alpha/pyscript.js" /> */}
     <Global styles={globalStyles} />
     <Global styles={footnotesStyles} />
     <Global styles={theme["global"]} />

@@ -13,6 +13,7 @@ from types import FunctionType, ModuleType
 import html
 import re
 from urllib.parse import quote
+import rho_plus
 
 import logging
 import click_log
@@ -248,6 +249,21 @@ plt.close('all')
             if star.star_type == "markdown_matplotlib":
                 self._run_matplotlib(star, star_id, new_global_state, global_mods)
 
+    def _save_vega(self):
+        """Saves the appropriate Vega themes to a public directory to use as URLs."""
+        for color_mode, theme in (
+            ("light", rho_plus.vega_rho_light),
+            ("dark", rho_plus.vega_rho_dark),
+        ):
+            with open(
+                Path(__file__).parent.parent.parent
+                / "constellate-server"
+                / "public"
+                / f"vega_rho_{color_mode}.json",
+                "w",
+            ) as outfile:
+                json.dump(theme, outfile)
+
     def _save_all_panel(self, save_folder: PathLike):
         """Saves all of the server code in the Constellation to the folder.
 
@@ -306,6 +322,7 @@ plt.close('all')
     def save_all(self):
         """Runs all of the methods required to prepare a Constellation for export. Does not prepare Panel servers."""
         self._save_all_matplotlib()
+        self._save_vega()
         self._save_all_dataframe()
 
     @classmethod

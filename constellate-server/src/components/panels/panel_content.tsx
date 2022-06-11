@@ -5,6 +5,8 @@ import LatexPanel from "./latex_panel";
 import PanelPanel from "./panel_panel";
 import PlotlyPanel from "./plotly_panel";
 import DFPanel from "./df_panel";
+import WidgetPanel from "./widget_panel";
+import VegaPanel from "./vega_panel";
 import { to_strings } from "./df_panel";
 
 type PanelContentProps = {
@@ -48,5 +50,11 @@ export default function PanelContent(props: PanelContentProps) {
       return (
         <DFPanel data={to_strings(props.star.df_json)} code={props.star.code} />
       );
+
+    case "markdown_vega":
+      return <VegaPanel chart={props.star.chart} code={props.star.vega} />;
+
+    case "markdown_widget":
+      return <WidgetPanel html={props.star.html} />;
   }
 }

@@ -39,7 +39,7 @@ class SideBarClass extends React.Component<{
           name: titles[i],
           id: htmlIdGenerator("bc")(),
           items: [],
-          href: `/star/${i}`,
+          href: `/${this.props.constellation.slug}/${i}`,
         };
 
         ids_to_crumbs[stars[i].star_id] = crumb;

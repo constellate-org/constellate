@@ -80,13 +80,18 @@ class PanelPanelInner extends React.Component<PanelProps> {
         content: (
           <div id="imgEmbedContainer">
             <div
-              id={`imgEmbedContent${colorMode}`}
+              id={`imgEmbedContentLIGHT`}
               css={styles.embedContent}
+              style={{
+                visibility: colorMode == "LIGHT" ? "visible" : "hidden",
+              }}
             ></div>
             <div
-              id={`imgEmbedContent${invColorMode}`}
+              id={`imgEmbedContentDARK`}
               css={styles.embedContent}
-              style={{ visibility: "hidden" }}
+              style={{
+                visibility: colorMode != "LIGHT" ? "visible" : "hidden",
+              }}
             ></div>
           </div>
         ),
@@ -111,20 +116,6 @@ class PanelPanelInner extends React.Component<PanelProps> {
       },
     ];
 
-    if (typeof document !== "undefined") {
-      const embed = document.getElementById(this.props.uuid + invColorMode);
-      console.log("3");
-      if (embed) {
-        console.log("4");
-        if (document.getElementById(`imgEmbedContent${invColorMode}`)) {
-          document.getElementById(`imgEmbedContent${invColorMode}`).innerHTML =
-            "";
-        }
-        this.loadPlot(false);
-        console.log("6");
-      }
-    }
-
     return (
       <>
         <EuiTabbedContent
@@ -137,15 +128,9 @@ class PanelPanelInner extends React.Component<PanelProps> {
           css={styles.tabPanel}
           onTabClick={(tab) => {
             if (tab.id == "img") {
-              this.loadPlot(true);
+              this.loadPlot(false);
               console.log("5");
             } else {
-              if (document.getElementById(`imgEmbedContent${invColorMode}`)) {
-                document.getElementById(
-                  `imgEmbedContent${invColorMode}`
-                ).innerHTML = "";
-              }
-              // document.getElementById(this.props.uuid + colorMode).remove();
             }
           }}
         />
