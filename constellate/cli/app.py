@@ -11,6 +11,8 @@ from glob import glob
 import logging
 import click_log
 import os
+from watchdog.observers import Observer
+from watchdog.events import PatternMatchingEventHandler
 
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
@@ -31,23 +33,8 @@ def format_files(filenames):
     return "\n".join([click.format_filename(fn) for fn in filenames])
 
 
-@cli.command()
-@click.argument("inputs", nargs=-1, type=click.Path(exists=True, dir_okay=False))
-@click.option(
-    "--confirm/--no-confirm",
-    default=True,
-    help="don't ask for confirmation before running arbitrary code",
-)
-@click.option("-n", "--no-input", is_flag=True, help="run without any user prompting")
-@click.option(
-    "-o",
-    "--out_dir",
-    default=CONSTELLATION_DIR,
-    help="output directory",
-    type=click.Path(file_okay=False, writable=True, path_type=Path),
-)
-def build(inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path):
-    """Builds INPUTS (Jupyter notebooks) into Constellations."""
+def _build(inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path):
+    """Build command wrapper. See build() for documentation."""
     if not inputs:
         raise MissingParameter("No input files found, exiting")
 
@@ -65,21 +52,25 @@ def build(inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path):
             paths.append(fn)
 
         # warn about safety concerns
-        click.confirm(
-            "\n".join(
-                [
-                    click.style("Build the following notebooks?", bold=True),
-                    click.style(
-                        "WARNING: This can run arbitrary code. Only do this if you trust the authors.",
-                        bold=True,
-                        fg="bright_red",
-                    ),
-                    click.style(format_files(paths), fg="blue", dim=True),
-                    "\n",
-                ]
-            ),
-            abort=True,
-        )
+        if confirm:
+            click.confirm(
+                "\n".join(
+                    [
+                        click.style("Build the following notebooks?", bold=True),
+                        click.style(
+                            "WARNING: This can run arbitrary code. Only do this if you trust the authors.",
+                            bold=True,
+                            fg="bright_red",
+                        ),
+                        click.style(format_files(paths), fg="bright_blue", dim=True),
+                        "\n",
+                    ]
+                ),
+                abort=True,
+            )
+    else:
+        # just add all paths
+        paths = inputs
 
     out_dir.mkdir(parents=True, exist_ok=True)
 
@@ -99,6 +90,7 @@ def build(inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path):
     if no_input:
         for fn in paths:
             process(fn)
+        logger.debug(f"Built successfully to {out_dir}")
     else:
         with click.progressbar(
             paths, label=click.style("Building Constellations", fg="blue")
@@ -110,6 +102,26 @@ def build(inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path):
             click.style(f"{len(paths)}", fg="blue", bold=True)
             + " notebooks built successfully\n"
         )
+
+
+@cli.command()
+@click.argument("inputs", nargs=-1, type=click.Path(exists=True, dir_okay=False))
+@click.option(
+    "--confirm/--no-confirm",
+    default=True,
+    help="don't ask for confirmation before running arbitrary code",
+)
+@click.option("-n", "--no-input", is_flag=True, help="run without any user prompting")
+@click.option(
+    "-o",
+    "--out_dir",
+    default=CONSTELLATION_DIR,
+    help="output directory",
+    type=click.Path(file_okay=False, writable=True, path_type=Path),
+)
+def build(inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path):
+    """Builds INPUTS (Jupyter notebooks) into Constellations."""
+    _build(inputs, confirm, no_input, out_dir)
 
 
 @cli.command()
@@ -131,20 +143,64 @@ def python_serve(constellations_dir: Path):
 
 
 @cli.command()
-@click.argument(
-    "constellations_dir",
-    default=CONSTELLATION_DIR,
-    type=click.Path(file_okay=False, exists=True, path_type=Path),
+@click.argument("inputs", nargs=-1, type=click.Path(exists=True, dir_okay=False))
+@click.option(
+    "--confirm/--no-confirm",
+    default=True,
+    help="don't ask for confirmation before running arbitrary code",
 )
-def dev(constellations_dir: Path):
-    """Serves the site on a dev server."""
-    if not list(constellations_dir.glob("*.constellate")):
+@click.option("-n", "--no-input", is_flag=True, help="run without any user prompting")
+@click.option(
+    "-o",
+    "--out_dir",
+    default=CONSTELLATION_DIR,
+    help="output directory",
+    type=click.Path(file_okay=False, writable=True, path_type=Path),
+)
+def dev(
+    inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path,
+):
+    """Serves the given notebooks on a development server, automatically watching the files and reloading changes."""
+    _build(inputs, confirm, no_input, out_dir)
+    if not list(out_dir.glob("*.constellate")):
         click.secho("No Constellations, exiting", fg="blue")
         return
 
-    subprocess.run(
-        f"yarn --cwd constellate-server dev", shell=True,
-    )
+    yarn_dev = subprocess.Popen(["yarn", "--cwd", "constellate-server", "dev"])
+
+    class RebuildEventHandler(PatternMatchingEventHandler):
+        def on_modified(self, event):
+            logger.info(f"Rebuilding {event.src_path}")
+            # rebuild the modified notebook
+            _build(
+                [event.src_path], confirm=False, no_input=True, out_dir=out_dir,
+            )
+            logger.info("Completed rebuild")
+
+    observers = []
+    for infile in inputs:
+        obs = Observer()
+        obs.schedule(RebuildEventHandler([infile], ignore_directories=True), infile)
+        observers.append(obs)
+
+    try:
+        for obs in observers:
+            obs.start()
+        while True:
+            retval = yarn_dev.poll()
+            if retval is not None and retval != 0:
+                # exited with error, restart
+                yarn_dev.terminate()
+                yarn_dev = subprocess.Popen(
+                    ["yarn", "--cwd", "constellate-server", "dev"]
+                )
+    except Exception as e:
+        logger.error(f"Error: {e}", exc_info=True)
+    finally:
+        for obs in observers:
+            obs.stop()
+        yarn_dev.terminate()
+        click.echo("Terminated")
 
 
 @cli.command()
@@ -159,9 +215,7 @@ def build_site(constellations_dir: Path):
         click.secho("No Constellations, exiting", fg="blue")
         return
 
-    subprocess.run(
-        f"yarn --cwd constellate-server build", shell=True,
-    )
+    subprocess.run(["yarn", "--cwd", "constellate-server", "build"])
 
 
 @cli.command()
@@ -176,6 +230,4 @@ def serve_production(constellations_dir: Path):
         click.secho("No Constellations, exiting", fg="blue")
         return
 
-    subprocess.run(
-        f"yarn --cwd constellate-server start", shell=True,
-    )
+    subprocess.run(["yarn", "--cwd", "constellate-server", "start"])

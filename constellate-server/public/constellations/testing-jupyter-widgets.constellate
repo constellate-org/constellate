@@ -23,8 +23,8 @@
   "stars": [
     {
       "kind": "markdown_vega",
-      "markdown": "# Testing Jupyter Widgets",
-      "vega": "import altair as alt\n\nsource = pd.read_json(\n    'https://cdn.jsdelivr.net/npm/vega-datasets@2/data/penguins.json')\n\nbrush = alt.selection(type='interval', resolve='global')\nspecies = alt.selection_multi(fields=['Species'], bind='legend')\n\nbase: alt.Chart = alt.Chart(source)\n\nscatter = base.mark_point().encode(\n    color=alt.condition(brush, 'Species:N', alt.ColorValue('gray')),\n    tooltip=list(source.columns),\n    opacity=alt.condition(species, alt.value(1), alt.value(0.2)),\n    shape=alt.Shape('Island:N')).add_selection(brush, species)\n\nchart: alt.Chart = (\n    scatter.encode(x=alt.X('Beak Length (mm)', scale=alt.Scale(zero=False)),\n                   y=alt.Y('Beak Depth (mm)', scale=alt.Scale(zero=False))) &\n    scatter.encode(x=alt.X('Flipper Length (mm)', scale=alt.Scale(zero=False)),\n                   y=alt.Y('Body Mass (g)', scale=alt.Scale(zero=False))))\n\nchart.properties(title='Penguin Biometrics')\n",
+      "markdown": "# Testing Jupyter Widgets\n\n## Testing Edit 3",
+      "vega": "import altair as alt\n\nsource = pd.read_json(\n    'https://cdn.jsdelivr.net/npm/vega-datasets@2/data/penguins.json')\n\nbrush = alt.selection(type='interval', resolve='global')\nspecies = alt.selection_multi(fields=['Species'], bind='legend')\n\nbase: alt.Chart = alt.Chart(source)\n\nscatter = base.mark_point().encode(\n    color=alt.condition(brush, 'Species:N', alt.ColorValue('gray')),\n    tooltip=list(source.columns),\n    opacity=alt.condition(species, alt.value(1), alt.value(0.2)),\n    shape=alt.Shape('Island:N')).add_selection(brush,\n                                               species).properties(width=600,\n                                                                   height=300)\n\nchart: alt.Chart = (\n    scatter.encode(x=alt.X('Beak Length (mm)', scale=alt.Scale(zero=False)),\n                   y=alt.Y('Beak Depth (mm)', scale=alt.Scale(zero=False))) &\n    scatter.encode(x=alt.X('Flipper Length (mm)', scale=alt.Scale(zero=False)),\n                   y=alt.Y('Body Mass (g)', scale=alt.Scale(zero=False))))\n\nchart.properties(title='Penguin Biometrics')\n",
       "chart": {
         "config": {
           "view": {
@@ -100,6 +100,7 @@
                 "type": "quantitative"
               }
             },
+            "height": 300,
             "selection": {
               "selector005": {
                 "type": "interval",
@@ -112,7 +113,8 @@
                 ],
                 "bind": "legend"
               }
-            }
+            },
+            "width": 600
           },
           {
             "mark": "point",
@@ -181,6 +183,7 @@
                 "type": "quantitative"
               }
             },
+            "height": 300,
             "selection": {
               "selector005": {
                 "type": "interval",
@@ -193,7 +196,8 @@
                 ],
                 "bind": "legend"
               }
-            }
+            },
+            "width": 600
           }
         ],
         "data": {
@@ -3302,7 +3306,7 @@
           ]
         }
       },
-      "star_id": "3h1fvh4W"
+      "star_id": "MvsrgQ9b"
     }
   ],
   "breadcrumbs": [

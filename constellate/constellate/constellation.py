@@ -145,12 +145,16 @@ class Constellation:
         """
         # run this twice, for two different themes
         SET_LIGHT = """
+import matplotlib
+matplotlib.use('Agg')
 import rho_plus
 IS_DARK = False
 cs = rho_plus.mpl_setup(IS_DARK)
 (c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
         """
         SET_DARK = """
+import matplotlib
+matplotlib.use('Agg')
 import rho_plus
 IS_DARK = True
 cs = rho_plus.mpl_setup(IS_DARK)
@@ -163,22 +167,28 @@ cs = rho_plus.mpl_setup(IS_DARK)
             # print(scope["__builtins__"].keys())
             exec(setup, scope)
             exec(star.code, scope)
+            exec(
+                """
+import matplotlib.pyplot as plt
+fig = plt.gcf()
+            """,
+                scope,
+            )
 
             # get the figure, making sure to import matplotlib
             # we also need to get rid of the XML tag that matplotlib adds
             exec(
                 """
-import matplotlib.pyplot as plt
 import io
 import base64
 bio = io.BytesIO()
-plt.savefig(bio,  format='svg')
+fig.savefig(bio,  format='svg')
 bio.seek(0)
 # get rid of xml tag, just include svg
 svg = bio.read().decode()
 svg = svg[svg.find('<svg'):].replace('\\n', '')
 pic_svg = svg
-plt.close('all')
+plt.close(fig)
             """,
                 scope,
             )
