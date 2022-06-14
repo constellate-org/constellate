@@ -17,9 +17,10 @@ export default function VegaPanel(props) {
       content: (
         <div style={{ height: "100%", width: "100%" }}>
           {
-            // @ts-ignore
             <Vega
               spec={chart}
+              /*
+                            // @ts-ignore */
               config={
                 colorMode === "LIGHT" ? rho_light["config"] : rho_dark["config"]
               }

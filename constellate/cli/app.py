@@ -161,7 +161,10 @@ def dev(
     inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path,
 ):
     """Serves the given notebooks on a development server, automatically watching the files and reloading changes."""
-    _build(inputs, confirm, no_input, out_dir)
+
+    if click.confirm("Build from scratch? ", default=True) and not no_input:
+        _build(inputs, confirm, no_input, out_dir)
+
     if not list(out_dir.glob("*.constellate")):
         click.secho("No Constellations, exiting", fg="blue")
         return

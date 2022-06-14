@@ -94,6 +94,8 @@ class Constellation:
         h3_re = r"### (.+)"
 
         def match_heading(md: str) -> Tuple[int, str]:
+            """Returns a tuple (n, head) to match a header of level n with text
+            head, or (4, "") if no such header exists."""
             for i, pat in enumerate([h1_re, h2_re, h3_re]):
                 match = re.match(pat, md)
                 if match:
@@ -147,17 +149,21 @@ class Constellation:
         SET_LIGHT = """
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import rho_plus
 IS_DARK = False
-cs = rho_plus.mpl_setup(IS_DARK)
+theme, cs = rho_plus.mpl_setup(IS_DARK)
+plt.style.use(theme)
 (c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
         """
         SET_DARK = """
 import matplotlib
 matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import rho_plus
 IS_DARK = True
-cs = rho_plus.mpl_setup(IS_DARK)
+theme, cs = rho_plus.mpl_setup(IS_DARK)
+plt.style.use(theme)
 (c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
         """
         for color_mode, setup in zip(("light", "dark"), (SET_LIGHT, SET_DARK)):

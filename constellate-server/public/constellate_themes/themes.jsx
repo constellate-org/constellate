@@ -1,5 +1,8 @@
+// This file defines themes that control how Constellations look.
 const themes = {
+  // The default theme.
   default: {
+    // React node added to the head of each document. Use this to import CSS, fonts, or whatever else you need.
     head: <>
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="true" />
@@ -18,12 +21,12 @@ const themes = {
     eui: {
       colors: {
         LIGHT: {
-          primary: '#003EBF',
-          accent: '#009ea3',
+          primary: '#215DB0',
+          accent: '#007067',
         },
         DARK: {
-          primary: '#0092F2',
-          accent: '#00A5C1',
+          primary: '#4C90F0',
+          accent: '#13C9BA',
         },
       },
       font: {

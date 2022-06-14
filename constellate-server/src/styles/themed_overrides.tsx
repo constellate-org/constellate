@@ -23,12 +23,13 @@ export default function CustomStyling() {
 
   let primaryBg, accentBg, colors;
   if (colorMode == "DARK") {
-    primaryBg = transparentize(t.colors.primary, 0.6);
-    accentBg = transparentize(t.colors.accent, 0.6);
+    // we can't dilute this as much or we run out of colors and we get banding issues
+    primaryBg = shade(t.colors.primary, 0.4);
+    accentBg = shade(t.colors.accent, 0.4);
     colors = dark_css;
   } else {
-    primaryBg = transparentize(t.colors.primary, 0.6);
-    accentBg = transparentize(t.colors.accent, 0.6);
+    primaryBg = tint(t.colors.primary, 0.5);
+    accentBg = tint(t.colors.accent, 0.5);
     colors = light_css;
   }
 
@@ -110,20 +111,27 @@ export default function CustomStyling() {
     }
 
     #panelTabs div[role = "tabpanel"], .gradientBg {
-        background: ${primaryBg};
-        background: linear-gradient(90deg, ${primaryBg} 0%, ${accentBg} 100%);
-    }
+      background: ${transparentize(primaryBg, 0.5)};
+      background: linear-gradient(-50deg, ${transparentize(
+        primaryBg,
+        0.89
+      )} 0%, ${transparentize(accentBg, 0.89)} 90%),
+      url("/images/noise.png");
+      background-blend-mode: normal;
+}
 
-    #imgEmbedContent, #latexContent {
-        background-color: ${euiTheme.colors.emptyShade};
-    }
+
+
+#imgEmbedContent, #latexContent {
+    background-color: ${euiTheme.colors.emptyShade};
+}
 
 
    .genericPanel divcode.euiCodeBlock__code {
-        background-color: ${transparentize(t.colors.emptyShade, 0.9)};
-    }
+    background-color: ${transparentize(t.colors.emptyShade, 0.9)};
+}
 
-    `;
+`;
 
   return <Global styles={styles} />;
 }
