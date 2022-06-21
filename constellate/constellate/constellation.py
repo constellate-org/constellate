@@ -154,7 +154,7 @@ import rho_plus
 IS_DARK = False
 theme, cs = rho_plus.mpl_setup(IS_DARK)
 plt.style.use(theme)
-(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
+(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12) = cs
         """
         SET_DARK = """
 import matplotlib
@@ -164,7 +164,7 @@ import rho_plus
 IS_DARK = True
 theme, cs = rho_plus.mpl_setup(IS_DARK)
 plt.style.use(theme)
-(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10) = cs
+(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12) = cs
         """
         for color_mode, setup in zip(("light", "dark"), (SET_LIGHT, SET_DARK)):
             scope = deepcopy(global_state)
