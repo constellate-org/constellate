@@ -21,51 +21,58 @@ type PanelProps = {
 class PanelPanelInner extends React.Component<PanelProps> {
   constructor(props) {
     super(props);
+    this.loadPlot(false);
+    console.log("7");
   }
 
-  componentDidMount() {
-    this.loadPlot(true);
-    console.log("7");
+  componentWillUnmount() {
+    const { colorMode } = this.props.theme;
+    if (typeof document !== "undefined") {
+      const plot = document.getElementById(`imgEmbedContent${colorMode}`);
+      plot.innerHTML = "";
+    }
   }
 
   loadPlot(force: boolean) {
     const { colorMode } = this.props.theme;
-    const plot = document.getElementById(`imgEmbedContent${colorMode}`);
-    if (!plot || plot.innerHTML === "") {
-      const xhr = new XMLHttpRequest();
-      xhr.responseType = "text";
+    if (typeof document !== "undefined") {
+      const plot = document.getElementById(`imgEmbedContent${colorMode}`);
+      if (!plot || plot.innerHTML === "") {
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = "text";
 
-      const url = this.props.url;
-      const path = `${this.props.star.star_id}`;
-      xhr.open(
-        "GET",
-        `${url}/${path}/autoload.js?bokeh-autoload-element=imgEmbedContent${colorMode}&bokeh-app-path=/${path}&bokeh-absolute-url=${url}/${path}&colorMode=${colorMode.toLocaleLowerCase()}`,
-        true
-      );
-      xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
-      xhr.setRequestHeader("Bokeh-Session-Id", this.props.uuid + colorMode);
-      xhr.setRequestHeader("Access-Control-Allow-Origin", "localhost:3000");
-      xhr.setRequestHeader("ColorMode", colorMode);
+        const url = this.props.url;
+        const path = `${this.props.star.star_id}`;
+        xhr.open(
+          "GET",
+          `${url}/${path}/autoload.js?bokeh-autoload-element=imgEmbedContent${colorMode}&bokeh-app-path=/${path}&bokeh-absolute-url=${url}/${path}&colorMode=${colorMode.toLocaleLowerCase()}`,
+          true
+        );
+        xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+        xhr.setRequestHeader("Bokeh-Session-Id", this.props.uuid + colorMode);
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "localhost:3000");
+        xhr.setRequestHeader("ColorMode", colorMode);
 
-      const script_id = this.props.uuid + colorMode;
-      xhr.onload = function (event) {
-        console.log("1");
-        if (
-          document !== undefined &&
-          (!document.getElementById(script_id) || force)
-        ) {
-          const script = document.createElement("script");
-          script.id = script_id;
-          const src = (event.target as XMLHttpRequest).response;
-          script.innerHTML = src.replaceAll(
-            `"static/extensions/panel`,
-            `"${url}/static/extensions/panel`
-          );
-          console.log("2", script);
-          document.body.appendChild(script);
-        }
-      };
-      xhr.send();
+        const script_id = this.props.uuid + colorMode;
+        xhr.onload = function (event) {
+          console.log("1");
+          if (
+            document !== undefined &&
+            (!document.getElementById(script_id) || force)
+          ) {
+            const script = document.createElement("script");
+            script.id = script_id;
+            const src = (event.target as XMLHttpRequest).response;
+            script.innerHTML = src.replaceAll(
+              `"static/extensions/panel`,
+              `"${url}/static/extensions/panel`
+            );
+            console.log("2", script);
+            document.body.appendChild(script);
+          }
+        };
+        xhr.send();
+      }
     }
   }
 

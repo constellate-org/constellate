@@ -124,6 +124,7 @@ const parsed = require('dotenv').config({ path: `./.env.custom.local` }).parsed
 
 if (parsed) {
   nextConfig.env.CONSTELLATE_THEME = parsed.CONSTELLATE_THEME;
+  nextConfig.env.PANEL_URL = parsed.PANEL_URL;
 }
 
 /**

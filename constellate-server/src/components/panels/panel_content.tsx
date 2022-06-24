@@ -8,6 +8,7 @@ import DFPanel from "./df_panel";
 import WidgetPanel from "./widget_panel";
 import VegaPanel from "./vega_panel";
 import { to_strings } from "./df_panel";
+import testHTML from "../../../public/testPyscript";
 
 type PanelContentProps = {
   star: Star;
@@ -55,6 +56,6 @@ export default function PanelContent(props: PanelContentProps) {
       return <VegaPanel chart={props.star.chart} code={props.star.vega} />;
 
     case "markdown_widget":
-      return <WidgetPanel html={props.star.html} />;
+      return <WidgetPanel html={testHTML} />;
   }
 }
