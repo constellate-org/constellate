@@ -19,7 +19,7 @@ const usePathPrefix = process.env.PATH_PREFIX === 'true';
 
 const pathPrefix = usePathPrefix ? derivePathPrefix() : '';
 
-const themeConfig = buildThemeConfig();
+const themeConfig = buildThemeConfig();                   //
 
 const nextConfig = {
   /** Disable the `X- Powered - By: Next.js` response header. */
@@ -55,10 +55,8 @@ const nextConfig = {
   env: {
     PATH_PREFIX: pathPrefix,
     THEME_CONFIG: JSON.stringify(themeConfig),
-    PANEL_URL: 'http://127.0.0.1:5006',
     PLOTLY_LIGHT_TEMPLATE: 'none',
     PLOTLY_DARK_TEMPLATE: 'plotly_dark',
-    CONSTELLATE_THEME: 'default',
   },
 
   /**
@@ -120,12 +118,14 @@ const nextConfig = {
   },
 };
 
-const parsed = require('dotenv').config({ path: `./.env.custom.local` }).parsed
+const parsed = require('dotenv').config({ path: process.env.NODE_ENV === "development" ? `./.env.custom.local` : `./.env.production` }).parsed;
 
 if (parsed) {
   nextConfig.env.CONSTELLATE_THEME = parsed.CONSTELLATE_THEME;
   nextConfig.env.PANEL_URL = parsed.PANEL_URL;
 }
+
+
 
 /**
  * Enhances the Next config with the ability to:

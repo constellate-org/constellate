@@ -21,58 +21,96 @@ type PanelProps = {
 class PanelPanelInner extends React.Component<PanelProps> {
   constructor(props) {
     super(props);
-    this.loadPlot(false);
     console.log("7");
   }
 
-  componentWillUnmount() {
+  isPlotThere() {
     const { colorMode } = this.props.theme;
     if (typeof document !== "undefined") {
+      const plot = document.getElementById(`imgEmbedContent${colorMode}`);
+      if (!plot || plot.innerHTML === "") {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  componentDidMount() {
+    console.log("1");
+    if (!this.isPlotThere()) {
+      console.log("2");
+      this.loadPlot(false);
+    }
+  }
+
+  componentWillUnmount() {
+    console.log("11");
+    const { colorMode } = this.props.theme;
+    if (this.isPlotThere()) {
+      console.log("12");
       const plot = document.getElementById(`imgEmbedContent${colorMode}`);
       plot.innerHTML = "";
     }
   }
 
+  componentDidUpdate(prevProps) {
+    console.log("3");
+    if (prevProps.theme.colorMode !== this.props.theme.colorMode) {
+      console.log("6");
+      this.loadPlot(false);
+    }
+  }
+
   loadPlot(force: boolean) {
-    const { colorMode } = this.props.theme;
-    if (typeof document !== "undefined") {
-      const plot = document.getElementById(`imgEmbedContent${colorMode}`);
-      if (!plot || plot.innerHTML === "") {
-        const xhr = new XMLHttpRequest();
-        xhr.responseType = "text";
+    let { colorMode } = this.props.theme;
+    console.log("8", colorMode);
+    if (!this.isPlotThere()) {
+      console.log("10");
+      const xhr = new XMLHttpRequest();
+      xhr.responseType = "text";
 
-        const url = this.props.url;
-        const path = `${this.props.star.star_id}`;
-        xhr.open(
-          "GET",
-          `${url}/${path}/autoload.js?bokeh-autoload-element=imgEmbedContent${colorMode}&bokeh-app-path=/${path}&bokeh-absolute-url=${url}/${path}&colorMode=${colorMode.toLocaleLowerCase()}`,
-          true
-        );
-        xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
-        xhr.setRequestHeader("Bokeh-Session-Id", this.props.uuid + colorMode);
-        xhr.setRequestHeader("Access-Control-Allow-Origin", "localhost:3000");
-        xhr.setRequestHeader("ColorMode", colorMode);
+      const url = this.props.url;
+      const path = `${this.props.star.star_id}`;
+      xhr.open(
+        "GET",
+        `${url}/${path}/autoload.js?bokeh-autoload-element=imgEmbedContent${colorMode}&bokeh-app-path=/${path}&bokeh-absolute-url=${url}/${path}&colorMode=${colorMode.toLocaleLowerCase()}`,
+        true
+      );
+      xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
+      xhr.setRequestHeader("Bokeh-Session-Id", this.props.uuid + colorMode);
+      xhr.setRequestHeader("Access-Control-Allow-Origin", "localhost:3000");
+      xhr.setRequestHeader("ColorMode", colorMode);
 
-        const script_id = this.props.uuid + colorMode;
-        xhr.onload = function (event) {
-          console.log("1");
+      const script_id = this.props.uuid + colorMode;
+      xhr.onload = function (event) {
+        console.log("1");
+        if (
+          (typeof document !== "undefined" &&
+            (!document.getElementById(`imgEmbedContent${colorMode}`) ||
+              document.getElementById(`imgEmbedContent${colorMode}`)
+                .innerHTML === "")) ||
+          force
+        ) {
+          const script = document.createElement("script");
           if (
-            document !== undefined &&
-            (!document.getElementById(script_id) || force)
+            typeof document !== "undefined" &&
+            document.getElementById(script_id)
           ) {
-            const script = document.createElement("script");
-            script.id = script_id;
-            const src = (event.target as XMLHttpRequest).response;
-            script.innerHTML = src.replaceAll(
-              `"static/extensions/panel`,
-              `"${url}/static/extensions/panel`
-            );
-            console.log("2", script);
-            document.body.appendChild(script);
+            document.getElementById(script_id).remove();
           }
-        };
-        xhr.send();
-      }
+          script.id = script_id;
+          const src = (event.target as XMLHttpRequest).response;
+          script.innerHTML = src.replaceAll(
+            `"static/extensions/panel`,
+            `"${url}/static/extensions/panel`
+          );
+          console.log("2", script);
+          document.body.appendChild(script);
+        }
+      };
+      xhr.send();
     }
   }
 
@@ -90,14 +128,14 @@ class PanelPanelInner extends React.Component<PanelProps> {
               id={`imgEmbedContentLIGHT`}
               css={styles.embedContent}
               style={{
-                visibility: colorMode == "LIGHT" ? "visible" : "hidden",
+                display: colorMode === "LIGHT" ? "block" : "none",
               }}
             ></div>
             <div
               id={`imgEmbedContentDARK`}
               css={styles.embedContent}
               style={{
-                visibility: colorMode != "LIGHT" ? "visible" : "hidden",
+                display: colorMode === "DARK" ? "block" : "none",
               }}
             ></div>
           </div>
