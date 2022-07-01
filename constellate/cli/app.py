@@ -137,7 +137,7 @@ def python_serve(constellations_dir: Path):
         return
 
     subprocess.run(
-        f'python -m panel serve {constellations_dir / ".panel_servers" / "*.py"} --address "0.0.0.0" --port 5006 --allow-websocket-origin="*"  --session-token-expiration=900000',
+        f'python -m panel serve {constellations_dir / ".panel_servers" / "*.py"} --address "0.0.0.0" --port 5006 --allow-websocket-origin="*"  --session-token-expiration=900000 --use-xheaders',
         shell=True,
     )
 

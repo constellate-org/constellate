@@ -1,5 +1,5 @@
-import { InlineMath, BlockMath } from './create_comp';
-import macros from './preamble';
+import { InlineMath, BlockMath } from "./create_comp";
+import macros from "./preamble";
 
 export type MathParserOptions = {
   singleDollar?: boolean;
@@ -18,13 +18,13 @@ export function MathMarkdownParser({
     let tokenMatch = value.match(/^\$\$([^$]+?)\$\$/);
     let mode;
     if (tokenMatch !== null) {
-      mode = 'block';
+      mode = "block";
     } else if (singleDollar) {
       // now attempt to match inline math
       tokenMatch = value.match(/^\$([^\n$]+?)\$/);
 
       if (tokenMatch != null) {
-        mode = 'inline';
+        mode = "inline";
       }
     }
 
@@ -39,7 +39,7 @@ export function MathMarkdownParser({
     }
     // must consume the exact & entire match string
     return eat(whole)({
-      type: 'mathPlugin',
+      type: "mathPlugin",
       math: math, // configuration is passed to the renderer
       mode: mode,
     });
@@ -47,20 +47,20 @@ export function MathMarkdownParser({
 
   // function to detect where the next math match might be found
   tokenizeMath.locator = (value, fromIndex) => {
-    return value.indexOf('$', fromIndex);
+    return value.indexOf("$", fromIndex);
   };
 
   // define the math plugin and inject it just before the existing text plugin
   tokenizers.math = tokenizeMath;
-  methods.splice(0, 0, 'math');
+  methods.splice(0, 0, "math");
 }
 
 // this will inevitably produce divs in ps, idk how to fix it
 export function KatexRenderer(props) {
   const { math, mode } = props;
-  if (mode === 'block') {
-    return <BlockMath math={math} macros={macros} />;
+  if (mode === "block") {
+    return <BlockMath math={math} macros={macros} trust={true} />;
   } else {
-    return <InlineMath math={math} macros={macros} />;
+    return <InlineMath math={math} macros={macros} trust={true} />;
   }
 }
