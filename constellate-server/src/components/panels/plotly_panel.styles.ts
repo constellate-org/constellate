@@ -18,6 +18,23 @@ export default function plotlyPanelStyles(theme, mSize) {
             size: mSize,
         },
         colorway: colorMode.toLocaleLowerCase() === 'dark' ? darkColors : lightColors,
+        scene: {
+            xaxis: {
+                backgroundcolor: t.colors.lightestShade,
+                color: t.colors.lightShade,
+                gridcolor: t.colors.mediumShade,
+            },
+            yaxis: {
+                backgroundcolor: t.colors.lightestShade,
+                color: t.colors.lightShade,
+                gridcolor: t.colors.mediumShade,
+            },
+            zaxis: {
+                backgroundcolor: t.colors.lightestShade,
+                color: t.colors.lightShade,
+                gridcolor: t.colors.mediumShade,
+            }
+        }
     };
 
     return {
