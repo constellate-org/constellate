@@ -80,7 +80,6 @@ class PanelPanelInner extends React.Component<PanelProps> {
       );
       xhr.setRequestHeader("Cache-Control", "no-cache, no-store, max-age=0");
       xhr.setRequestHeader("Bokeh-Session-Id", this.props.uuid + colorMode);
-      xhr.setRequestHeader("Access-Control-Allow-Origin", "localhost:3000");
       xhr.setRequestHeader("ColorMode", colorMode);
 
       const script_id = this.props.uuid + colorMode;
