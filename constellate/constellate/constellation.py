@@ -14,6 +14,7 @@ import html
 import re
 from urllib.parse import quote
 import rho_plus
+import pickle
 
 import logging
 import click_log
@@ -246,10 +247,11 @@ plt.close(fig)
         global_mods = {}
         new_global_state = {}
         for k in list(global_state.keys()):
-            if isinstance(global_state[k], ModuleType) or k == "__builtins__":
-                global_mods[k] = global_state[k]
-            else:
+            try:
+                deepcopy(global_state[k])
                 new_global_state[k] = global_state[k]
+            except TypeError as e:
+                global_mods[k] = global_state[k]
 
         return (new_global_state, global_mods)
 
