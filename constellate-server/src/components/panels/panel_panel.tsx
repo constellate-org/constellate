@@ -105,8 +105,17 @@ class PanelPanelInner extends React.Component<PanelProps> {
             `"static/extensions/panel`,
             `"${url}/static/extensions/panel`
           );
-          console.log("2", script);
-          document.body.appendChild(script);
+
+          if (
+            (typeof document !== "undefined" &&
+              (!document.getElementById(`imgEmbedContent${colorMode}`) ||
+                document.getElementById(`imgEmbedContent${colorMode}`)
+                  .innerHTML === "")) ||
+            force
+          ) {
+            console.log("2", script);
+            document.body.appendChild(script);
+          }
         }
       };
       xhr.send();
