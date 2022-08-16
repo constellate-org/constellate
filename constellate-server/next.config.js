@@ -64,9 +64,10 @@ const nextConfig = {
    * leverage this behavior and prefer something else instead, like your
    * editor's integration, you may want to disable it.
    */
-  // typescript: {
-  //   ignoreDevErrors: true,
-  // },
+  typescript: {
+    // ignoreDevErrors: true,
+    ignoreBuildErrors: true,
+  },
 
   /** Customises the build */
   webpack(config, { isServer }) {

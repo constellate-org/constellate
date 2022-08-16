@@ -7,6 +7,7 @@ import Shortcuts from "../../components/hotkeys";
 import glob from "glob";
 import {
   EuiButton,
+  EuiButtonEmpty,
   EuiButtonIcon,
   EuiCollapsibleNav,
   EuiFlexGroup,
@@ -21,6 +22,7 @@ import {
   EuiPanel,
   EuiResizableContainer,
   useEuiTheme,
+  useIsWithinBreakpoints,
 } from "@elastic/eui";
 import { useRouter } from "next/router";
 import SideBar from "../../components/side_nav";
@@ -31,6 +33,8 @@ import renderFootnoteBlock from "../../components/markdown/footnotes_collapse";
 import themes from "../../../public/constellate_themes/themes";
 import { readFileSync } from "fs";
 import path from "path";
+import { EuiResizablePanel } from "@elastic/eui/src/components/resizable_container/resizable_panel";
+import { EuiResizableButton } from "@elastic/eui/src/components/resizable_container/resizable_button";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
@@ -53,6 +57,38 @@ function StarPage({ constellations }) {
 
   const prevId = starId - 1 >= 0 ? starId - 1 : null;
   const nextId = starId + 1 < numIds ? starId + 1 : null;
+
+  const isMobile = useIsWithinBreakpoints(["xs", "s"]);
+
+  const prevButton = (
+    <Link href={`/${constellation.slug}/${prevId}`} passHref>
+      <EuiButton
+        size="s"
+        id="prevBtn"
+        rel="prev me"
+        color="text"
+        href={`/${constellation.slug}/${prevId}`}
+        isDisabled={prevId === null}
+      >
+        Last Page
+      </EuiButton>
+    </Link>
+  );
+  const nextButton = (
+    <Link href={`/${constellation.slug}/${nextId}`} passHref>
+      <EuiButton
+        size="s"
+        color="primary"
+        fill
+        rel="next me"
+        href={`/${constellation.slug}/${nextId}`}
+        id="nextBtn"
+        isDisabled={nextId === null}
+      >
+        Next Page
+      </EuiButton>
+    </Link>
+  );
 
   const imgTabContentFunc = (EuiResizablePanel) => {
     if (shouldRenderImg) {
@@ -77,66 +113,18 @@ function StarPage({ constellations }) {
     }
   };
 
-  const collapsibleNav = (
-    <EuiCollapsibleNav
-      size={300}
-      onClose={() => {
-        setIsNavOpen(false);
-      }}
-      isOpen={isNavOpen}
-      isDocked={isNavOpen}
-      closeButtonPosition="inside"
-      button={
-        <EuiButtonIcon
-          aria-labelledby="menu"
-          iconType="menu"
-          color="text"
-          display={isNavOpen ? "fill" : "empty"}
-          id="toggleMenu"
-          onClick={() => setIsNavOpen(!isNavOpen)}
-        >
-          Open
-        </EuiButtonIcon>
-      }
-      showButtonIfDocked
-      ownFocus={false}
-      className="collapseNavAnimate"
+  const navButton = (
+    <EuiButtonIcon
+      aria-labelledby="menu"
+      iconType="menu"
+      color="text"
+      display={isNavOpen ? "fill" : "base"}
+      size="s"
+      id="toggleMenu"
+      onClick={() => setIsNavOpen(!isNavOpen)}
     >
-      {isNavOpen && (
-        <EuiPanel>
-          <EuiFlexGroup
-            direction="column"
-            justifyContent="spaceBetween"
-            className="eui-fullHeight"
-          >
-            <EuiFlexItem>
-              <SideBar constellation={constellation} currId={starId}></SideBar>
-            </EuiFlexItem>
-            <EuiFlexItem grow={false}>
-              <EuiListGroup gutterSize="none">
-                <EuiListGroupItem
-                  size="xs"
-                  wrapText
-                  label={"© Nicholas Miklaucic 2022"}
-                />
-                <EuiListGroupItem
-                  size="xs"
-                  wrapText
-                  href="https://github.com/nicholas-miklaucic/constellate"
-                  label="Made Using Constellation"
-                />
-                <EuiListGroupItem
-                  size="xs"
-                  wrapText
-                  href="#"
-                  label="Static version"
-                />
-              </EuiListGroup>
-            </EuiFlexItem>
-          </EuiFlexGroup>
-        </EuiPanel>
-      )}
-    </EuiCollapsibleNav>
+      Open
+    </EuiButtonIcon>
   );
 
   return (
@@ -149,79 +137,87 @@ function StarPage({ constellations }) {
 
           <EuiPageTemplate
             paddingSize="none"
-            template="empty"
-            fullHeight={true}
             restrictWidth={false}
-            className="page-grow"
+            direction="row"
+            panelled={false}
           >
-            <EuiHeader position="fixed">
-              <EuiHeaderSection side="left">
-                <EuiHeaderSectionItem>{collapsibleNav}</EuiHeaderSectionItem>
-                <EuiHeaderSectionItem>
-                  <EuiHeaderLogo iconType={theme["site_logo"]}>
-                    {theme["site_title"]}
-                  </EuiHeaderLogo>
-                </EuiHeaderSectionItem>
-              </EuiHeaderSection>
-              <EuiHeaderSection side="left">
-                <EuiHeaderSectionItem>
-                  <h1 id="essay-title">{constellation.title}</h1>
-                </EuiHeaderSectionItem>
-              </EuiHeaderSection>
-              <EuiHeaderSection side="right">
-                <EuiHeaderSectionItem>
-                  <ThemeSwitcher key="theme-switcher" />
-                </EuiHeaderSectionItem>
-                <EuiHeaderSectionItem>
-                  <Shortcuts />
-                </EuiHeaderSectionItem>
-              </EuiHeaderSection>
-            </EuiHeader>
-            <EuiResizableContainer className="eui-fullHeight">
-              {(EuiResizablePanel, EuiResizableButton) => (
-                <>
-                  <EuiResizablePanel
-                    initialSize={shouldRenderImg ? 50 : 100}
-                    scrollable={false}
-                    grow={true}
-                    paddingSize="none"
-                    color="plain"
-                    hasShadow
-                    hasBorder
-                  >
-                    <TextPanel content={constellation.stars[starId].markdown} />
-                    {prevId !== null && (
-                      <Link href={`/${constellation.slug}/${prevId}`} passHref>
-                        <EuiButton
-                          id="prevBtn"
-                          rel="prev me"
-                          color="text"
-                          href={`/${constellation.slug}/${prevId}`}
-                        >
-                          Last Page
-                        </EuiButton>
-                      </Link>
-                    )}
-                    {nextId !== null && (
-                      <Link href={`/${constellation.slug}/${nextId}`} passHref>
-                        <EuiButton
-                          color="primary"
-                          rel="next me"
-                          fill={true}
-                          href={`/${constellation.slug}/${nextId}`}
-                          id="nextBtn"
-                        >
-                          Next Page
-                        </EuiButton>
-                      </Link>
-                    )}
-                  </EuiResizablePanel>
-
-                  <EuiResizableButton />
-                  {imgTabContentFunc(EuiResizablePanel)}
-                </>
-              )}
-            </EuiResizableContainer>
+            <EuiPageTemplate.Header
+              iconType={theme["site_logo"]}
+              bottomBorder={false}
+              paddingSize="m"
+              pageTitle={constellation.title}
+              pageTitleProps={{
+                id: "essay-title",
+              }}
+              rightSideItems={[
+                navButton,
+                <Shortcuts />,
+                <ThemeSwitcher key="theme-switcher" />,
+                nextButton,
+                prevButton,
+              ]}
+              rightSideGroupProps={{ style: { alignItems: "center" } }}
+              id="pageHeader"
+            ></EuiPageTemplate.Header>
+            {isNavOpen && (
+              <EuiPageTemplate.Sidebar paddingSize="xl" sticky>
+                <EuiFlexGroup
+                  direction="column"
+                  justifyContent="spaceBetween"
+                  className="eui-fullHeight"
+                >
+                  <EuiFlexItem>
+                    <SideBar
+                      constellation={constellation}
+                      currId={starId}
+                    ></SideBar>
+                  </EuiFlexItem>
+                  <EuiFlexItem grow={false}>
+                    <EuiListGroup gutterSize="none">
+                      <EuiListGroupItem
+                        size="xs"
+                        wrapText
+                        label={"© Nicholas Miklaucic 2022"}
+                      />
+                      <EuiListGroupItem
+                        size="xs"
+                        wrapText
+                        href="https://github.com/nicholas-miklaucic/constellate"
+                        label="Made Using Constellation"
+                      />
+                    </EuiListGroup>
+                  </EuiFlexItem>
+                </EuiFlexGroup>
+              </EuiPageTemplate.Sidebar>
+            )}
+            <EuiPageTemplate.Section
+              id="mainSection"
+              contentProps={{ style: { height: "100%" } }}
+            >
+              <EuiResizableContainer
+                className="eui-fullHeight"
+                direction={isMobile ? "vertical" : "horizontal"}
+              >
+                {(EuiResizablePanel, EuiResizableButton) => (
+                  <>
+                    <EuiResizablePanel
+                      initialSize={shouldRenderImg ? 50 : 100}
+                      scrollable={false}
+                      grow={true}
+                      paddingSize="none"
+                      color="plain"
+                      hasShadow
+                      hasBorder
+                    >
+                      <TextPanel
+                        content={constellation.stars[starId].markdown}
+                      />
+                    </EuiResizablePanel>
+                    {imgTabContentFunc(EuiResizablePanel)}
+                  </>
+                )}
+              </EuiResizableContainer>
+            </EuiPageTemplate.Section>
           </EuiPageTemplate>
         </>
       )}

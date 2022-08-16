@@ -1,6 +1,6 @@
-import { FunctionComponent } from 'react';
-import { EuiButtonIcon } from '@elastic/eui';
-import { useTheme } from '../theme';
+import { FunctionComponent } from "react";
+import { EuiButtonIcon } from "@elastic/eui";
+import { useTheme } from "../theme";
 
 /**
  * Current theme is set in localStorage
@@ -8,7 +8,7 @@ import { useTheme } from '../theme';
  */
 const ThemeSwitcher: FunctionComponent = () => {
   const { colorMode, setColorMode } = useTheme();
-  const isDarkTheme = colorMode === 'dark';
+  const isDarkTheme = colorMode === "dark";
 
   const handleChangeTheme = (newTheme: string) => {
     setColorMode(newTheme);
@@ -16,13 +16,14 @@ const ThemeSwitcher: FunctionComponent = () => {
 
   return (
     <EuiButtonIcon
+      size="s"
       color="text"
-      iconType={isDarkTheme ? 'sun' : 'moon'}
+      display="base"
+      iconType={isDarkTheme ? "sun" : "moon"}
       aria-label="Change theme"
       id="themeSwitcher"
-      onClick={() =>
-        handleChangeTheme(isDarkTheme ? 'light' : 'dark')
-      }></EuiButtonIcon>
+      onClick={() => handleChangeTheme(isDarkTheme ? "light" : "dark")}
+    ></EuiButtonIcon>
   );
 };
 

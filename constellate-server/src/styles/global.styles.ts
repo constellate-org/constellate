@@ -39,6 +39,44 @@ body {
     height: 100vh;
 }
 
+_next {
+    width: 100%;
+    height: 100%;
+}
+
+#mainGroup {
+
+}
+
+.euiPageTemplate {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+
+main {
+    height: 100%;
+}
+
+#pageHeader {
+
+}
+
+#mainSection {
+   flex-grow: 1;
+   min-height: 0;
+}
+
+#pageHeader .euiPageHeaderContent__top {
+
+}
+
+#pageHeader .euiPageHeaderContent__top .euiFlexItem {
+   margin-top: 0;
+   margin-bottom: 0;
+   align-content: center;
+}
+
 .euiBody--headerIsFixed {
   padding-top: 48px;
 }
@@ -58,9 +96,6 @@ body {
     font-weight: 400 !important;
 }
 
-.euiBody--headerIsFixed {
-    padding-top: 47px;
-}
 
 #main {
     width: 100%;
@@ -160,19 +195,6 @@ padding: 1rem;
     // border-top: 1px solid grey;
 }
 
-#prevBtn {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    margin: 16px;
-}
-
-#nextBtn {
-    position: absolute;
-    bottom: 0px;
-    right: 0px;
-    margin: 16px;
-}
 
 .noTopBorderRadius {
     border-top-left-radius: 0 !important;

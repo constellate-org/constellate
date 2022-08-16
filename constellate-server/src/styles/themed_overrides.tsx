@@ -61,9 +61,11 @@ export default function CustomStyling() {
     #textContent h1, #textContent h2, #textContent h3, #textContent h4 {
       font-family: ${t.font.family};
     }
-        #nextBtn {
-        background-color: ${t.colors.primary};
+
+    #pageHeader {
+       background-color: ${t.colors.emptyShade};
     }
+
         .no-invert-bg.euiControlBar {
         background-color: ${t.colors.body};
         box-shadow: none;
@@ -71,16 +73,16 @@ export default function CustomStyling() {
     }
 
         .no-invert-bg.euiControlBar.euiControlBar__text {
-        color: ${t.colors.subdued};
+        color: ${t.colors.subduedText};
     }
 
         .no-invert-bg.euiControlBar.euiControlBar__breadcrumbs.euiBreadcrumb::after {
-        background-color: ${t.colors.subdued};
+        background-color: ${t.colors.subduedText};
     }
 
         .no-invert-bg.euiControlBar euiControlBar__breadcrumbs.euiBreadcrumb: not(.euiBreadcrumb--last).euiBreadcrumb__content,
         .no-invert-bg.euiControlBar.euiControlBar__breadcrumbs.euiBreadcrumb: not(.euiBreadcrumb--last).euiBreadcrumb__content {
-        color: ${t.colors.subdued};
+        color: ${t.colors.subduedText};
     }
 
 
@@ -89,25 +91,11 @@ export default function CustomStyling() {
     }
 
         .euiSideNavItem.euiSideNavItem--trunk {
-        color: ${euiTheme.colors.subdued};
+        color: ${euiTheme.colors.subduedText};
     }
 
         .currItem.euiSideNavItem--emphasized {
         color: ${euiTheme.colors.primaryText};
-    }
-
-        .euiPageHeaderContent__top.euiFlexGroup--gutterLarge {
-        background-color: ${primaryBg};
-        color: ${euiTheme.colors.ghost};
-        margin: 0px;
-    }
-
-        .euiPageHeaderContent__top.euiFlexGroup--gutterLarge h1 {
-        color: inherit;
-    }
-
-        .euiPageHeaderContent__top.euiFlexGroup--gutterLarge.euiIcon {
-        fill: ${euiTheme.colors.ghost};
     }
 
     #panelTabs div[role = "tabpanel"], .gradientBg {

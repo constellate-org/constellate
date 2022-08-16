@@ -1,6 +1,6 @@
 // @ts-no
 
-import { GlobalHotKeys } from 'react-hotkeys';
+import { GlobalHotKeys } from "react-hotkeys";
 import {
   EuiDescriptionList,
   EuiFlyout,
@@ -9,48 +9,48 @@ import {
   EuiTitle,
   EuiButtonIcon,
   htmlIdGenerator,
-} from '@elastic/eui';
-import React from 'react';
+} from "@elastic/eui";
+import React from "react";
 
 function keyDisplay(keycode: string) {
   // map to Unicode if arrows
   const SPECIAL_KEYS = {
-    ArrowLeft: '←',
-    ArrowRight: '→',
-    ArrowUp: '↑',
-    ArrowDown: '↓',
-    shift: 'Shift',
+    ArrowLeft: "←",
+    ArrowRight: "→",
+    ArrowUp: "↑",
+    ArrowDown: "↓",
+    shift: "Shift",
   };
 
   if (keycode in SPECIAL_KEYS) {
-    return <kbd key={htmlIdGenerator('kbd')()}>{SPECIAL_KEYS[keycode]}</kbd>;
+    return <kbd key={htmlIdGenerator("kbd")()}>{SPECIAL_KEYS[keycode]}</kbd>;
   }
 
   // if combination, parse each sub-unit
-  if (keycode.match('.+\\+.+')) {
-    const parts = keycode.split('+');
-    return parts.map(keyDisplay).reduce((prev, curr) => [prev, '+', curr]);
+  if (keycode.match(".+\\+.+")) {
+    const parts = keycode.split("+");
+    return parts.map(keyDisplay).reduce((prev, curr) => [prev, "+", curr]);
   }
 
   // otherwise, print in all caps: probably single letter
   return (
-    <kbd key={htmlIdGenerator('kbd')()}>{keycode.toLocaleUpperCase()}</kbd>
+    <kbd key={htmlIdGenerator("kbd")()}>{keycode.toLocaleUpperCase()}</kbd>
   );
 }
 
 function hotKeysInfo(keyMap) {
-  const items = Object.keys(keyMap).map(actionName => {
+  const items = Object.keys(keyMap).map((actionName) => {
     const { sequences, name } = keyMap[actionName];
 
     return {
       title: name,
       description: sequences
-        .map(sequence => (
-          <kbd key={htmlIdGenerator('kbd')()}>{keyDisplay(sequence)}</kbd>
+        .map((sequence) => (
+          <kbd key={htmlIdGenerator("kbd")()}>{keyDisplay(sequence)}</kbd>
         ))
         .reduce((prev, curr) => [
           prev,
-          <kbd key={htmlIdGenerator('kbd')()}>, </kbd>,
+          <kbd key={htmlIdGenerator("kbd")()}>, </kbd>,
           curr,
         ]),
     };
@@ -61,7 +61,7 @@ function hotKeysInfo(keyMap) {
   );
 }
 
-const HelpFlyout = props => {
+const HelpFlyout = (props) => {
   return props.isOpen ? (
     <EuiFlyout onClose={props.onClose} paddingSize="l" size="s">
       <EuiFlyoutHeader hasBorder>
@@ -88,43 +88,43 @@ class ShortcutHandler extends React.Component<
   render() {
     const keyMap = {
       NEXT_PAGE: {
-        name: 'Next page',
-        sequences: ['f', 'n', 'ArrowRight'],
+        name: "Next page",
+        sequences: ["f", "n", "ArrowRight"],
       },
       PREV_PAGE: {
-        name: 'Previous page',
-        sequences: ['p', 'b', 'ArrowLeft'],
+        name: "Previous page",
+        sequences: ["p", "b", "ArrowLeft"],
       },
       TOGGLE_THEME: {
-        name: 'Toggle dark theme',
-        sequences: ['d'],
+        name: "Toggle dark theme",
+        sequences: ["d"],
       },
       MENU: {
-        name: 'Show menu',
-        sequences: ['m'],
+        name: "Show menu",
+        sequences: ["m"],
       },
       HELP: {
-        name: 'Show this help dialog',
-        sequences: ['h', 'shift+?'],
+        name: "Show this help dialog",
+        sequences: ["h", "shift+?"],
       },
     };
 
     const handlers = {
       NEXT_PAGE: () => {
-        if (document.getElementById('nextBtn')) {
-          document.getElementById('nextBtn').click();
+        if (document.getElementById("nextBtn")) {
+          document.getElementById("nextBtn").click();
         }
       },
       PREV_PAGE: () => {
-        if (document.getElementById('prevBtn')) {
-          document.getElementById('prevBtn').click();
+        if (document.getElementById("prevBtn")) {
+          document.getElementById("prevBtn").click();
         }
       },
       TOGGLE_THEME: () => {
-        document.getElementById('themeSwitcher').click();
+        document.getElementById("themeSwitcher").click();
       },
       MENU: () => {
-        document.getElementById('toggleMenu').click();
+        document.getElementById("toggleMenu").click();
       },
       HELP: () => {
         this.setState({ isFlyoutOpen: !this.state.isFlyoutOpen });
@@ -139,14 +139,17 @@ class ShortcutHandler extends React.Component<
         }
         <HelpFlyout
           isOpen={this.state.isFlyoutOpen}
-          onClose={() => this.setState({ isFlyoutOpen: false })}>
+          onClose={() => this.setState({ isFlyoutOpen: false })}
+        >
           {hotKeysInfo(keyMap)}
         </HelpFlyout>
         <EuiButtonIcon
           onClick={() => this.setState({ isFlyoutOpen: true })}
-          iconType="keyboardShortcut"
+          iconType="keyboard"
           aria-label="Show Keyboard Shortcuts"
           color="text"
+          display="base"
+          size="s"
         />
       </>
     );
