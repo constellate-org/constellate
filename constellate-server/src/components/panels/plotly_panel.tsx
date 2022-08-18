@@ -20,7 +20,7 @@ export default function PlotlyPanel(props) {
 
   const styles = plotlyPanelStyles(useEuiTheme(), useEuiFontSize("m", "px"));
 
-  layout["font"]["family"] = styles.fontFamily;
+  layout["font"] = { family: styles.fontFamily };
 
   // remove plotly logo
   const config = { displaylogo: false };
