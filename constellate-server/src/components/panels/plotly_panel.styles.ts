@@ -1,5 +1,7 @@
 import { transparentize } from '@elastic/eui';
 import { css } from '@emotion/react';
+import rhoLight from '../../../public/plotly_rho_light.json';
+import rhoDark from '../../../public/plotly_rho_dark.json';
 
 // prettier-ignore
 export default function plotlyPanelStyles(theme, mSize) {
@@ -38,7 +40,8 @@ export default function plotlyPanelStyles(theme, mSize) {
     };
 
     return {
-        plotlyLayout: options,
+        plotlyLayout: colorMode.toLocaleLowerCase() === 'dark' ? rhoDark.layout : rhoLight.layout,
+        fontFamily: t.font.family,
         tabPanel: css`
 height: 100%;
   `,

@@ -5,26 +5,30 @@ import {
   EuiTabbedContent,
   useEuiFontSize,
   useEuiTheme,
-} from '@elastic/eui';
-import dynamic from 'next/dynamic';
-const Plot = dynamic(() => import('react-plotly.js'), { ssr: false });
-import plotlyPanelStyles from './plotly_panel.styles';
-import { merge } from 'lodash';
-import Script from 'next/script';
+} from "@elastic/eui";
+import dynamic from "next/dynamic";
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
+import plotlyPanelStyles from "./plotly_panel.styles";
+import { merge } from "lodash";
+import Script from "next/script";
+import rhoLight from "../../../public/plotly_rho_light.json";
+import rhoDark from "../../../public/plotly_rho_dark.json";
 
 export default function PlotlyPanel(props) {
   const { fig, code } = props;
   const { data, layout } = fig;
 
-  const styles = plotlyPanelStyles(useEuiTheme(), useEuiFontSize('m', 'px'));
+  const styles = plotlyPanelStyles(useEuiTheme(), useEuiFontSize("m", "px"));
+
+  layout["font"]["family"] = styles.fontFamily;
 
   // remove plotly logo
   const config = { displaylogo: false };
 
   const tabs = [
     {
-      id: 'img',
-      name: 'Plot',
+      id: "img",
+      name: "Plot",
       content: (
         <>
           {
@@ -32,16 +36,18 @@ export default function PlotlyPanel(props) {
             <Plot
               data={data}
               layout={merge(layout, styles.plotlyLayout)}
+              useResizeHandler={true}
               config={config}
+              style={{ width: "100%", height: "100%" }}
             />
           }
         </>
       ),
     },
     {
-      id: 'code',
-      name: 'Code',
-      className: 'eui-fullHeight',
+      id: "code",
+      name: "Code",
+      className: "eui-fullHeight",
       content: (
         <EuiCodeBlock
           language="python"
@@ -51,7 +57,8 @@ export default function PlotlyPanel(props) {
           paddingSize="m"
           isCopyable={true}
           isVirtualized
-          className="codeBlockEmbed">
+          className="codeBlockEmbed"
+        >
           {code}
         </EuiCodeBlock>
       ),

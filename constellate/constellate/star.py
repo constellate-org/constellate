@@ -273,6 +273,7 @@ class MarkdownPlotly(Star):
         if fig is None:
             raise ValueError(f"Figure is null\nCode:\n{self.code}")
         else:
+            # make two versions of the figure, one with dark theme and one with light
             self.fig = fig
 
     def serialize(self):

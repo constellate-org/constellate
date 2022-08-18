@@ -90,23 +90,26 @@ function StarPage({ constellations }) {
     </Link>
   );
 
-  const imgTabContentFunc = (EuiResizablePanel) => {
+  const imgTabContentFunc = (EuiResizablePanel, EuiResizableButton) => {
     if (shouldRenderImg) {
       return (
-        <EuiResizablePanel
-          initialSize={50}
-          paddingSize="none"
-          color="plain"
-          className="genericPanel"
-        >
-          <PanelContent
-            star={constellation.stars[starId]}
-            uuid={uuid}
-            slug={constellation.slug}
-            panelUrl={process.env.PANEL_URL}
-            isDark={colorMode === "DARK"}
-          />
-        </EuiResizablePanel>
+        <>
+          <EuiResizableButton />
+          <EuiResizablePanel
+            initialSize={50}
+            paddingSize="none"
+            color="plain"
+            className="genericPanel"
+          >
+            <PanelContent
+              star={constellation.stars[starId]}
+              uuid={uuid}
+              slug={constellation.slug}
+              panelUrl={process.env.PANEL_URL}
+              isDark={colorMode === "DARK"}
+            />
+          </EuiResizablePanel>
+        </>
       );
     } else {
       return <></>;
@@ -213,7 +216,7 @@ function StarPage({ constellations }) {
                         content={constellation.stars[starId].markdown}
                       />
                     </EuiResizablePanel>
-                    {imgTabContentFunc(EuiResizablePanel)}
+                    {imgTabContentFunc(EuiResizablePanel, EuiResizableButton)}
                   </>
                 )}
               </EuiResizableContainer>
