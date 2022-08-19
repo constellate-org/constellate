@@ -24,14 +24,32 @@ import {
   EuiFlexItem,
   getDefaultEuiMarkdownParsingPlugins,
   getDefaultEuiMarkdownProcessingPlugins,
-} from '@elastic/eui';
-import remarkFootnotes from 'remark-footnotes';
-import remarkSmartypants from 'remark-smartypants';
-import remarkNumberedFootnoteLabels from 'remark-numbered-footnote-labels';
-import rehypeRaw from 'rehype-raw';
-import React from 'react';
+} from "@elastic/eui";
+import remarkFootnotes from "remark-footnotes";
+import remarkSmartypants from "remark-smartypants";
+import remarkNumberedFootnoteLabels from "remark-numbered-footnote-labels";
+import rehypeRaw from "rehype-raw";
+import remarkGfm from "remark-gfm";
+import rehypeStringify from "rehype-stringify";
+import React from "react";
 
-import { KatexRenderer, MathMarkdownParser } from './math';
+import { KatexRenderer, MathMarkdownParser } from "./math";
+
+function DebugParser() {
+  const Parser = this.Parser;
+  const tokenizers = Parser.prototype.blockTokenizers;
+  const methods = Parser.prototype.blockMethods;
+
+  function tokenizeTest(eat, value, silent) {
+    console.log("test value", value);
+
+    return eat(``)({
+      test: "debug",
+    });
+  }
+  tokenizers.debug = tokenizeTest;
+  methods.splice(methods.indexOf("text"), 0, "debug");
+}
 
 const parsingList = getDefaultEuiMarkdownParsingPlugins();
 
@@ -39,10 +57,10 @@ const parsingList = getDefaultEuiMarkdownParsingPlugins();
 parsingList.splice(3, 1);
 
 parsingList.push([MathMarkdownParser, { singleDollar: true }]);
-parsingList.push([remarkFootnotes, {}]);
 parsingList.push([remarkSmartypants, {}]);
-parsingList.push([remarkNumberedFootnoteLabels, {}]);
-// console.debug('parsingList 2', parsingList);
+parsingList.push([remarkFootnotes, {}]);
+// parsingList.push([DebugParser, {}]);
+// parsingList.push([remarkGfm, {}]);
 const processingList = getDefaultEuiMarkdownProcessingPlugins();
 
 processingList[1][1].components.checkboxplugin =
@@ -60,11 +78,12 @@ function doubleKbd(props) {
 processingList[1][1].components.kbd = doubleKbd;
 
 processingList.splice(processingList.length - 1, 0, [rehypeRaw]);
+
+console.log(parsingList);
 // @ts-ignore
 // processingList.splice(2, 0, [rehypeStringify, { allowDangerousHtml: true }]);
 // @ts-ignore
-// console.debug('processingList 2', processingList);
-// console.debug('comps', processingList.reverse()[0][1].components);
+console.log(processingList);
 
 export default function TextPanel(props) {
   return (
@@ -73,21 +92,25 @@ export default function TextPanel(props) {
       hasBorder={false}
       className="eui-fullHeight"
       grow={true}
-      paddingSize="m">
+      paddingSize="m"
+    >
       <EuiFlexGroup
         direction="column"
         justifyContent="center"
-        className="eui-fullHeight eui-yScroll">
+        className="eui-fullHeight eui-yScroll"
+      >
         <EuiFlexItem
           grow
           className="eui-fullHeight"
-          style={{ padding: '1rem' }}>
+          style={{ padding: "1rem" }}
+        >
           <div className="eui-yScroll">
             <EuiMarkdownFormat
               parsingPluginList={parsingList}
               processingPluginList={processingList}
               id="textContent"
-              grow>
+              grow
+            >
               {props.content}
             </EuiMarkdownFormat>
           </div>

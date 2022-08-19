@@ -42,11 +42,11 @@ export default function CustomStyling() {
       font-feature-settings: ${t.font.featureSettings};
     }
 
-    kbd>kbd {
+    kbd > kbd {
         border-radius: ${t.border.radius.small};
-        padding: 0.2rem;
-        background-color: ${t.colors.lightestShade};
-        color: ${t.colors.fullShade}
+        background-color: ${t.colors.lightShade};
+        color: ${t.colors.fullShade};
+        border-width: 0px !important;
     }
 
     .euiText code.euiCode {

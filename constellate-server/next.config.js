@@ -28,9 +28,9 @@ const nextConfig = {
   experimental: {
     esmExternals: false,
     // for index page, so I can manipulate the images in CSS
-    images: {
-      layoutRaw: true
-    }
+    // images: {
+    //   layoutRaw: true
+    // }d
   },
 
   /**
@@ -55,8 +55,6 @@ const nextConfig = {
   env: {
     PATH_PREFIX: pathPrefix,
     THEME_CONFIG: JSON.stringify(themeConfig),
-    PLOTLY_LIGHT_TEMPLATE: 'none',
-    PLOTLY_DARK_TEMPLATE: 'plotly_dark',
   },
 
   /**

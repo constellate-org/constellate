@@ -20,7 +20,7 @@ export default function VegaPanel(props) {
             <Vega
               spec={chart}
               /*
-                            // @ts-ignore */
+                                                        // @ts-ignore */
               config={
                 colorMode === "LIGHT" ? rho_light["config"] : rho_dark["config"]
               }
