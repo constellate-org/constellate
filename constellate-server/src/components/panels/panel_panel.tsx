@@ -5,6 +5,7 @@ import {
     EuiTabbedContent,
     UseEuiTheme,
     EuiLoadingChart,
+    EuiThemeColorMode,
 } from "@elastic/eui";
 import { MarkdownPanel } from "../../lib/constellate";
 import panelPanelStyles from "./panel_panel.styles";
@@ -21,16 +22,26 @@ type PanelProps = {
 
 type PanelState = {
     plotLoaded: boolean;
+    currColorMode: EuiThemeColorMode;
 }
 
 class PanelPanelInner extends React.Component<PanelProps, PanelState> {
     constructor(props) {
         super(props);
         this.state = {
-            plotLoaded: false
+            plotLoaded: false,
+            currColorMode: this.props.theme.colorMode
         };
         console.log("7");
     }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        return {
+            plotLoaded: (prevState.plotLoaded && nextProps.theme.colorMode === prevState.currColorMode),
+            currColorMode: (nextProps.theme.colorMode)
+        }
+    }
+
 
     isPlotThere() {
         const { colorMode } = this.props.theme;

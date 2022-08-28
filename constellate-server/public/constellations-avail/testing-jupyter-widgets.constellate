@@ -1,0 +1,34 @@
+{
+  "setup_matplotlib": [
+    "#constellate: setup\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nfrom scipy import stats\nimport colorcet as cc\nimport scipy\nfrom sympy import *\n\nimport panel as pn\nimport param\nimport bokeh\npn.extension(template=\"vanilla\")\n\nimport rho_plus\n\nIS_DARK = True\ncs = rho_plus.mpl_setup(IS_DARK)\n# rho_plus.vega_setup(IS_DARK)"
+  ],
+  "setup_panel": [
+    "#constellate: setup\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nfrom scipy import stats\nimport colorcet as cc\nimport scipy\nfrom sympy import *\n\nimport panel as pn\nimport param\nimport bokeh\npn.extension(template=\"vanilla\")\n\nimport rho_plus\n\nIS_DARK = True\ncs = rho_plus.mpl_setup(IS_DARK)\n# rho_plus.vega_setup(IS_DARK)"
+  ],
+  "setup_plotly": [
+    "#constellate: setup\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nfrom scipy import stats\nimport colorcet as cc\nimport scipy\nfrom sympy import *\n\nimport panel as pn\nimport param\nimport bokeh\npn.extension(template=\"vanilla\")\n\nimport rho_plus\n\nIS_DARK = True\ncs = rho_plus.mpl_setup(IS_DARK)\n# rho_plus.vega_setup(IS_DARK)"
+  ],
+  "setup_plain": [
+    "#constellate: setup\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nfrom scipy import stats\nimport colorcet as cc\nimport scipy\nfrom sympy import *\n\nimport panel as pn\nimport param\nimport bokeh\npn.extension(template=\"vanilla\")\n\nimport rho_plus\n\nIS_DARK = True\ncs = rho_plus.mpl_setup(IS_DARK)\n# rho_plus.vega_setup(IS_DARK)"
+  ],
+  "setup_dataframe": [
+    "#constellate: setup\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nfrom scipy import stats\nimport colorcet as cc\nimport scipy\nfrom sympy import *\n\nimport panel as pn\nimport param\nimport bokeh\npn.extension(template=\"vanilla\")\n\nimport rho_plus\n\nIS_DARK = True\ncs = rho_plus.mpl_setup(IS_DARK)\n# rho_plus.vega_setup(IS_DARK)"
+  ],
+  "setup_widget": [
+    "#constellate: setup\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nfrom scipy import stats\nimport colorcet as cc\nimport scipy\nfrom sympy import *\n\nimport panel as pn\nimport param\nimport bokeh\npn.extension(template=\"vanilla\")\n\nimport rho_plus\n\nIS_DARK = True\ncs = rho_plus.mpl_setup(IS_DARK)\n# rho_plus.vega_setup(IS_DARK)"
+  ],
+  "setup_vega": [
+    "#constellate: setup\n\nimport numpy as np\nimport pandas as pd\nimport matplotlib.pyplot as plt\nimport seaborn as sns\nfrom scipy import stats\nimport colorcet as cc\nimport scipy\nfrom sympy import *\n\nimport panel as pn\nimport param\nimport bokeh\npn.extension(template=\"vanilla\")\n\nimport rho_plus\n\nIS_DARK = True\ncs = rho_plus.mpl_setup(IS_DARK)\n# rho_plus.vega_setup(IS_DARK)"
+  ],
+  "stars": [
+    {
+      "kind": "markdown_widget",
+      "html": "",
+      "star_id": "MvsrgQ9b"
+    }
+  ],
+  "breadcrumbs": [[]],
+  "title": "Testing Jupyter Widgets",
+  "slug": "testing-jupyter-widgets",
+  "star_titles": ["Testing Jupyter Widgets"]
+}

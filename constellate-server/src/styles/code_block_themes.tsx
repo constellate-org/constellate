@@ -200,49 +200,7 @@ code.euiCodeBlock__code .token.entity {
 
 code.euiCodeBlock__code .token.namespace {
   opacity: 0.8;
-}
-
-
-.text-blue {
-    color: #3FA6DA;
-}
-
-.text-green {
-    color: #43BF4d;
-}
-
-.text-yellow {
-    color: #f0b726;
-}
-
-.text-red {
-    color: #eb6847;
-}
-
-.text-purple {
-    color: #bd6bbd;
-}
-
-.text-teal {
-    color: #13c9ba;
-}
-
-.text-pink {
-    color: #f5498b;
-}
-
-.text-lime {
-    color: #b6d94c;
-}
-
-.text-brown {
-    color: #af855a;
-}
-
-.text-indigo {
-    color: #9881f3;
-}
-`;
+}`;
 
 export const light_css = `
 /* Selection */
@@ -433,42 +391,4 @@ code.euiCodeBlock__code .token.entity {
 
 code.euiCodeBlock__code .token.namespace {
   opacity: 0.8;
-}
-
-.text-blue {
-    color: #147eb3;
-}
-
-.text-green {
-    color: #29a634;
-}
-
-.text-yellow {
-    color: #d1980b;
-}
-
-.text-red {
-    color: #d33d17;
-}
-
-.text-purple {
-    color: #9d3f9d;
-}
-
-.text-teal {
-    color: #00a396;
-}
-
-.text-pink {
-    color: #db2c6f;
-}
-.text-lime {
-    color: #8eb125;
-}
-.text-brown {
-    color: #946638;
-}
-.text-indigo {
-    color: #7961db;
-}
-`;
+}`;

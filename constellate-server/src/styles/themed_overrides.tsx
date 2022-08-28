@@ -12,6 +12,7 @@ import {
 } from "@elastic/eui";
 import { css, Global } from "@emotion/react";
 import { light_css, dark_css } from "./code_block_themes";
+import { light_color_css, dark_color_css } from "./color_classes";
 import themes from "../../public/constellate_themes/themes";
 import panelThemes from "./panel_overrides";
 
@@ -26,11 +27,11 @@ export default function CustomStyling() {
         // we can't dilute this as much or we run out of colors and we get banding issues
         primaryBg = shade(t.colors.primary, 0.4);
         accentBg = shade(t.colors.accent, 0.4);
-        colors = dark_css;
+        colors = dark_css + '\n' + dark_color_css;
     } else {
         primaryBg = tint(t.colors.primary, 0.5);
         accentBg = tint(t.colors.accent, 0.5);
-        colors = light_css;
+        colors = light_css + '\n' + light_color_css;
     }
 
     const styles = css`
