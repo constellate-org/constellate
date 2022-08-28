@@ -40,10 +40,9 @@ class ThemedPanel(param.Parameterized):
     @pn.depends("colorMode")
     def colors_theme(self):
         if self.colorMode == "light":
-            plt.style.use("rho-light")
+            _theme, colors = rho_plus.mpl_setup(False)
         else:
-            plt.style.use("rho-dark")
-        colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+            _theme, colors = rho_plus.mpl_setup(True)                    
         # theme = bokeh.themes.Theme(
         #     f"/home/nicholas/programs/rho-themes/themes/panel/eui/{self.colorMode}.yml"
         # )
