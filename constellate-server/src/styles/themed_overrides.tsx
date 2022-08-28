@@ -1,14 +1,14 @@
 import React from "react";
 import {
-  withEuiTheme,
-  WithEuiThemeProps,
-  EuiIcon,
-  EuiText,
-  useEuiTheme,
-  transparentize,
-  shade,
-  tint,
-  useEuiFontSize,
+    withEuiTheme,
+    WithEuiThemeProps,
+    EuiIcon,
+    EuiText,
+    useEuiTheme,
+    transparentize,
+    shade,
+    tint,
+    useEuiFontSize,
 } from "@elastic/eui";
 import { css, Global } from "@emotion/react";
 import { light_css, dark_css } from "./code_block_themes";
@@ -18,22 +18,22 @@ import panelThemes from "./panel_overrides";
 const theme = themes[process.env.CONSTELLATE_THEME];
 
 export default function CustomStyling() {
-  const { euiTheme, colorMode } = useEuiTheme();
-  let t = euiTheme;
+    const { euiTheme, colorMode } = useEuiTheme();
+    let t = euiTheme;
 
-  let primaryBg, accentBg, colors;
-  if (colorMode == "DARK") {
-    // we can't dilute this as much or we run out of colors and we get banding issues
-    primaryBg = shade(t.colors.primary, 0.4);
-    accentBg = shade(t.colors.accent, 0.4);
-    colors = dark_css;
-  } else {
-    primaryBg = tint(t.colors.primary, 0.5);
-    accentBg = tint(t.colors.accent, 0.5);
-    colors = light_css;
-  }
+    let primaryBg, accentBg, colors;
+    if (colorMode == "DARK") {
+        // we can't dilute this as much or we run out of colors and we get banding issues
+        primaryBg = shade(t.colors.primary, 0.4);
+        accentBg = shade(t.colors.accent, 0.4);
+        colors = dark_css;
+    } else {
+        primaryBg = tint(t.colors.primary, 0.5);
+        accentBg = tint(t.colors.accent, 0.5);
+        colors = light_css;
+    }
 
-  const styles = css`
+    const styles = css`
         ${colors}
 
     ${panelThemes(t)}
@@ -103,7 +103,7 @@ export default function CustomStyling() {
       background: linear-gradient(-50deg, ${transparentize(
         primaryBg,
         0.89
-      )} 0%, ${transparentize(accentBg, 0.89)} 90%),
+    )} 0%, ${transparentize(accentBg, 0.89)} 90%),
       url("/images/noise.png");
       background-blend-mode: normal;
 }
@@ -119,7 +119,28 @@ export default function CustomStyling() {
     background-color: ${transparentize(t.colors.emptyShade, 0.9)};
 }
 
+#vg-tooltip-element.vg-tooltip {
+    font-family: monospace;
+    ${useEuiFontSize('xxs')}
+    border: none;
+    border-radius: ${t.border.radius.small};
+}
+
+#vg-tooltip-element.vg-tooltip table tr td {
+      vertical-align: top;
+}
+
+#vg-tooltip-element.vg-tooltip table tr td.key {
+      font-weight: 400;
+      color: ${euiTheme.colors.primaryText};
+}
+
+#vg-tooltip-element.vg-tooltip table tr td.value {
+      font-weight: 400;
+      color: ${euiTheme.colors.text};
+}
+
 `;
 
-  return <Global styles={styles} />;
+    return <Global styles={styles} />;
 }
