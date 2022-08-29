@@ -64,7 +64,8 @@ class Gaussian(param.Parameterized):
                            bounds=(0, 4))
     sigma_xy = param.Number(label='Petal width/length correlation',
                             default=0,
-                            bounds=(-1, 1))
+                            bounds=(-1, 1),
+                            step=0.01)
 
     @pn.depends('mu_x', 'mu_y', 'sigma_x', 'sigma_y', 'sigma_xy')
     def generate_pdf(self, xy):
@@ -83,7 +84,8 @@ class GMMTest(ThemedPanel):
 
     p1 = param.Number(label='Proportion in cluster 1',
                       default=0.5,
-                      bounds=(0, 1))
+                      bounds=(0, 1),
+                      step=0.01)
 
     def __init__(self):
         super().__init__()
@@ -93,7 +95,7 @@ class GMMTest(ThemedPanel):
     @pn.depends('clust1.param', 'clust2.param', 'p1')
     def generate_pdf(self, xy):
         return self.clust1.generate_pdf(
-            xy) * self.p1 + self.clust2.generate_pdf(xy) * (1 - self.p1)
+            xy).T * self.p1 + self.clust2.generate_pdf(xy) * (1 - self.p1)
 
     @pn.depends('clust1.param', 'clust2.param', 'p1', 'colorMode')
     def plot(self):
@@ -101,8 +103,19 @@ class GMMTest(ThemedPanel):
         hv.Cycle.default_cycles['default_colors'] = colors
         hv.renderer('bokeh').theme = theme
 
-        xx, yy = np.mgrid[0:3.5:0.1, 0:7:0.2]
+        xx, yy = np.mgrid[0:3.5:0.05, 0:7:0.1]
         xy = np.dstack([xx, yy])
+
+        cmap = rho_plus.umbra
+        if self.colorMode != 'light':
+            cmap = cmap.rev()
+
+        img = hv.operation.contours(hv.Image(
+            (xx[:, 0], yy[0], self.generate_pdf(xy))),
+                                    levels=8,
+                                    filled=True).opts(cmap=cmap.as_mpl_cmap(),
+                                                      xlabel='Petal Width',
+                                                      ylabel='Petal Length')
 
         pdf = hv.QuadMesh((xx, yy, self.generate_pdf(xy))).opts(
             opts.QuadMesh(cmap=rho_plus.viridia.as_mpl_cmap(),
@@ -114,11 +127,12 @@ class GMMTest(ThemedPanel):
         points = hv.Points(flowers,
                            kdims=['Petal Width', 'Petal Length']).opts(
                                opts.Points(
-                                   color='white',
+                                   color=colors[0],
+                                   size=8,
                                    xlim=(np.min(xx), np.max(xx)),
                                    ylim=(np.min(yy), np.max(yy)),
                                ))
-        plot = pdf * points
+        plot = img * points
         return pn.pane.HoloViews(plot, sizing_mode='stretch_both')
 
 
