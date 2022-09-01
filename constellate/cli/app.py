@@ -2,7 +2,7 @@
 """CLI interface."""
 
 import subprocess
-from typing import Sequence
+from typing import Sequence, Optional
 import click
 from click.exceptions import MissingParameter
 from constellate.constellate.constellation import Constellation
@@ -13,13 +13,14 @@ import click_log
 import os
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
+from git import Repo, GitCommandError
+import shutil
 
 logger = logging.getLogger(__name__)
 click_log.basic_config(logger)
 
-CONSTELLATION_DIR = os.path.join(
-    os.getcwd(), "constellate-server", "public", "constellations"
-)
+SERVER_DIR = Path(__file__).parent.parent.parent.resolve() / "constellate-server"
+CONSTELLATION_DIR = SERVER_DIR / "public" / "constellations"
 
 
 @click.group()
@@ -234,3 +235,69 @@ def serve_production(constellations_dir: Path):
         return
 
     subprocess.run(["yarn", "--cwd", "constellate-server", "start"])
+
+
+@cli.command()
+@click.argument("inputs", nargs=-1, type=click.Path(exists=True, dir_okay=False))
+@click.option(
+    "--confirm/--no-confirm",
+    default=True,
+    help="don't ask for confirmation before running arbitrary code",
+)
+@click.option("-n", "--no-input", is_flag=True, help="run without any user prompting")
+@click.option(
+    "--repo_dir",
+    default=None,
+    type=click.Path(exists=True, file_okay=False),
+    help="Git repository directory (defaults to current)",
+)
+@click.option(
+    "--auto-commit/--no-auto-commit",
+    default=True,
+    help="Automatically commit files if working tree unclean",
+)
+def git_deploy(
+    inputs: Sequence[str],
+    confirm: bool,
+    no_input: bool,
+    repo_dir: Optional[Path],
+    auto_commit: bool,
+):
+    """Commits current work and builds to a separate branch. Then deploys."""
+    if repo_dir is None:
+        repo_dir = Path()
+
+    r = Repo(repo_dir)
+    curr_head = r.head.reference
+
+    try:
+        r.create_head("build", "HEAD")
+    except OSError:
+        # build already exists
+        # no need to create it
+        pass
+
+    try:
+        r.heads.build.checkout()
+    except GitCommandError:
+        if not auto_commit:
+            raise click.ClickException(
+                "You have unsaved work. Commit it before deploying."
+            )
+        else:
+            curr_head.index.commit("Automated source Constellate commit")
+            curr_head = r.head.reference
+            r.heads.build.checkout()
+
+    shutil.copytree(SERVER_DIR, repo_dir / "constellate-server", dirs_exist_ok=True)
+    _build(
+        inputs,
+        confirm,
+        no_input,
+        repo_dir / "constellate-server" / "public" / "constellations",
+    )
+
+    r.index.add([str(repo_dir.absolute() / "constellate-server" / ".gitignore")])
+    r.index.add([str(repo_dir.absolute() / "constellate-server")], force=False)
+    r.index.commit("Automated Constellate build")
+    curr_head.checkout()

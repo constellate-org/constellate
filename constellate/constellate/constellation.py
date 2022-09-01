@@ -338,7 +338,7 @@ plt.close(fig)
     def save_all(self):
         """Runs all of the methods required to prepare a Constellation for export. Does not prepare Panel servers."""
         self._save_all_matplotlib()
-        self._save_vega()
+        # self._save_vega()
         self._save_all_dataframe()
 
     @classmethod
