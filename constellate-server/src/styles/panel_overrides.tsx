@@ -2,10 +2,10 @@ import { EuiThemeComputed, shade, transparentize } from "@elastic/eui";
 import { css } from "@emotion/react";
 
 export default function panelThemes(t: EuiThemeComputed) {
-  return css`
+    return css`
     .bk-root .noUi-target {
       box-shadow: none;
-      border: 2px solid ${t.colors.lightShade};
+      border: 2px solid ${t.colors.lightestShade};
     }
     .bk-root .noUi-horizontal .noUi-handle {
       /* handle */

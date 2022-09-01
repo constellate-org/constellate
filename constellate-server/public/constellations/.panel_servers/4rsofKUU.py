@@ -27,28 +27,6 @@ from holoviews import opts
 
 flowers.columns = labelcase(flowers.columns)
 
-class ThemedPanel(param.Parameterized):
-    colorMode = param.ObjectSelector(["dark", "light"], precedence=-1)
-
-    def __init__(self):
-        super().__init__()
-        if 'colorMode' in pn.state.session_args:
-            self.colorMode = pn.state.session_args["colorMode"][0].decode().lower()
-        else:
-            self.colorMode = 'dark'
-
-    @pn.depends("colorMode")
-    def colors_theme(self):
-        if self.colorMode == "light":
-            _theme, colors = rho_plus.mpl_setup(False)
-        else:
-            _theme, colors = rho_plus.mpl_setup(True)                    
-        # theme = bokeh.themes.Theme(
-        #     f"/home/nicholas/programs/rho-themes/themes/panel/eui/{self.colorMode}.yml"
-        # )
-        theme = 'caliber' if self.colorMode == 'light' else 'dark_minimal'
-        return (colors, theme)
-
 import param
 from scipy import stats
 
@@ -78,7 +56,7 @@ class Gaussian(param.Parameterized):
                                          allow_singular=True).pdf(xy)
 
 
-class GMMTest(ThemedPanel):
+class GMMTest(rho_plus.ThemedPanel):
     clust1 = Gaussian()
     clust2 = Gaussian()
 
@@ -115,7 +93,8 @@ class GMMTest(ThemedPanel):
                                     levels=8,
                                     filled=True).opts(cmap=cmap.as_mpl_cmap(),
                                                       xlabel='Petal Width',
-                                                      ylabel='Petal Length')
+                                                      ylabel='Petal Length',
+                                                      responsive=True)
 
         pdf = hv.QuadMesh((xx, yy, self.generate_pdf(xy))).opts(
             opts.QuadMesh(cmap=rho_plus.viridia.as_mpl_cmap(),
@@ -131,16 +110,18 @@ class GMMTest(ThemedPanel):
                                    size=8,
                                    xlim=(np.min(xx), np.max(xx)),
                                    ylim=(np.min(yy), np.max(yy)),
+                                   responsive=True,
                                ))
         plot = img * points
         return pn.pane.HoloViews(plot, sizing_mode='stretch_both')
 
 
 mod = GMMTest()
-obj = pn.GridSpec(sizing_mode='stretch_both', margin=25)
+obj = pn.GridSpec(sizing_mode='stretch_both')
 obj[:, :1] = pn.Column(
     pn.Param(mod, sizing_mode='stretch_both', name='Cluster Size'),
     pn.Param(mod.clust1, name='Cluster 1'),
     pn.Param(mod.clust2, name='Cluster 2'))
 obj[:, 1:5] = pn.Column(mod.plot, sizing_mode='stretch_both')
+obj[:, 5:6] = pn.Spacer()
 obj.servable()

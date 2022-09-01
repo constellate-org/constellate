@@ -27,38 +27,18 @@ from holoviews import opts
 
 flowers.columns = labelcase(flowers.columns)
 
-class ThemedPanel(param.Parameterized):
-    colorMode = param.ObjectSelector(["dark", "light"], precedence=-1)
-
-    def __init__(self):
-        super().__init__()
-        if 'colorMode' in pn.state.session_args:
-            self.colorMode = pn.state.session_args["colorMode"][0].decode().lower()
-        else:
-            self.colorMode = 'dark'
-
-    @pn.depends("colorMode")
-    def colors_theme(self):
-        if self.colorMode == "light":
-            _theme, colors = rho_plus.mpl_setup(False)
-        else:
-            _theme, colors = rho_plus.mpl_setup(True)                    
-        # theme = bokeh.themes.Theme(
-        #     f"/home/nicholas/programs/rho-themes/themes/panel/eui/{self.colorMode}.yml"
-        # )
-        theme = 'caliber' if self.colorMode == 'light' else 'dark_minimal'
-        return (colors, theme)
-
 import holoviews as hv
 import panel as pn
 from holoviews import opts
 from hvplot import scatter_matrix
 from rho_plus.util import labelcase
 
+pn.extension(template='fast', comms='vscode')
+
 flowers.columns = labelcase(flowers.columns)
 
 
-class IrisGrid(ThemedPanel):
+class IrisGrid(rho_plus.ThemedPanel):
 
     @pn.depends('colorMode')
     def plot(self):
@@ -91,9 +71,9 @@ class IrisGrid(ThemedPanel):
             )
 
         gm = hv.Layout(plots).cols(n_cols)
-        return pn.pane.HoloViews(gm, center=True, sizing_mode='scale_both')
+        return pn.pane.HoloViews(gm, center=True, sizing_mode='stretch_both')
 
 
 ig = IrisGrid()
 
-pn.Row(ig.plot, sizing_mode='scale_both').servable()
+pn.Row(ig.plot, sizing_mode='stretch_both', margin=(5, 5, 30, 5)).servable()

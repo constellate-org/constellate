@@ -111,7 +111,7 @@ export default function CustomStyling() {
 
 
 
-#imgEmbedContent, #latexContent {
+#imgEmbedContent, #imgEmbedContentLIGHT, #imgEmbedContentDARK, #latexContent {
     background-color: ${euiTheme.colors.emptyShade};
 }
 

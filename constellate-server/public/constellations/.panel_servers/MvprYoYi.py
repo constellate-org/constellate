@@ -27,28 +27,6 @@ from holoviews import opts
 
 flowers.columns = labelcase(flowers.columns)
 
-class ThemedPanel(param.Parameterized):
-    colorMode = param.ObjectSelector(["dark", "light"], precedence=-1)
-
-    def __init__(self):
-        super().__init__()
-        if 'colorMode' in pn.state.session_args:
-            self.colorMode = pn.state.session_args["colorMode"][0].decode().lower()
-        else:
-            self.colorMode = 'dark'
-
-    @pn.depends("colorMode")
-    def colors_theme(self):
-        if self.colorMode == "light":
-            _theme, colors = rho_plus.mpl_setup(False)
-        else:
-            _theme, colors = rho_plus.mpl_setup(True)                    
-        # theme = bokeh.themes.Theme(
-        #     f"/home/nicholas/programs/rho-themes/themes/panel/eui/{self.colorMode}.yml"
-        # )
-        theme = 'caliber' if self.colorMode == 'light' else 'dark_minimal'
-        return (colors, theme)
-
 from scipy.spatial import Voronoi
 
 # generate dataset with clusters
@@ -69,7 +47,7 @@ pts = np.array(pts)
 rng: np.random.BitGenerator = np.random.default_rng(310)
 
 
-class KMeans(ThemedPanel):
+class KMeans(rho_plus.ThemedPanel):
     centers = param.Array(default=None, precedence=-1)
     assignments = param.Array(default=None, precedence=-1)
     phase = param.ObjectSelector(['expectation', 'maximization'],
@@ -149,7 +127,7 @@ reset = pn.widgets.Button(name='Reset',
                           margin=10)
 reset.on_click(lambda evt: mod.initialize_centers())
 
-obj = pn.GridSpec()
+obj = pn.GridSpec(sizing_mode='stretch_both', margin=20)
 obj[11, 0:1] = step
 obj[11, 1:2] = reset
 obj[:11, :] = mod.plot
