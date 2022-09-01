@@ -36,6 +36,7 @@ import path from "path";
 import { EuiResizablePanel } from "@elastic/eui/src/components/resizable_container/resizable_panel";
 import { EuiResizableButton } from "@elastic/eui/src/components/resizable_container/resizable_button";
 import React from "react";
+import NextEuiButton from "../../components/next_eui/button";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
@@ -63,7 +64,7 @@ function StarPage({ constellations }) {
 
     const prevButton = (
         <Link href={`/${constellation.slug}/${prevId}`} passHref>
-            <EuiButton
+            <NextEuiButton
                 size="s"
                 id="prevBtn"
                 rel="prev me"
@@ -72,12 +73,12 @@ function StarPage({ constellations }) {
                 isDisabled={prevId === null}
             >
                 Last Page
-            </EuiButton>
+            </NextEuiButton>
         </Link>
     );
     const nextButton = (
         <Link href={`/${constellation.slug}/${nextId}`} passHref>
-            <EuiButton
+            <NextEuiButton
                 size="s"
                 color="primary"
                 fill
@@ -87,7 +88,7 @@ function StarPage({ constellations }) {
                 isDisabled={nextId === null}
             >
                 Next Page
-            </EuiButton>
+            </NextEuiButton>
         </Link>
     );
 
