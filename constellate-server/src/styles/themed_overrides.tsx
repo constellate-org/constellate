@@ -141,6 +141,18 @@ export default function CustomStyling() {
       color: ${euiTheme.colors.text};
 }
 
+/* EUI tooltips are always dark: fix that for footnotes, adjusting the shadow to make it stand out more (doubling opacity) */
+div.fn-tooltip-div {
+        background-color: ${t.colors.emptyShade};
+        color: ${t.colors.darkestShade};
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 5px 0px, rgba(0, 0, 0, 0.14) 0px 3.6px 13px 0px, rgba(0, 0, 0, 0.12) 0px 8.4px 23px 0px, rgba(0, 0, 0, 0.1) 0px 23px 35px 0px;
+}
+
+/* style the thing on the bottom of the tooltip to match the tooltip color */
+div.fn-tooltip-div div.euiToolTip__arrow {
+        background-color: ${t.colors.emptyShade};
+}
+
 `;
 
     return <Global styles={styles} />;

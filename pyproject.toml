@@ -1,10 +1,13 @@
 [tool.poetry]
-name = "constellate"
-version = "0.2.0"
+name = "constellate_app"
+version = "0.1.3"
 description = "Render Jupyter Notebooks as beautiful interactive webapps"
 authors = ["Nicholas Miklaucic <nicholas.miklaucic@gmail.com>"]
 license = "MIT"
 include = ["constellate-server/src/**/*", "constellate-server/public/**/*", "constellate-server/*"]
+packages = [
+ { include = "constellate" }
+]
 
 [tool.poetry.dependencies]
 python = ">=3.8, <3.11"

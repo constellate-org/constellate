@@ -105,6 +105,12 @@ def _build(inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path):
         )
 
 
+def install_if_missing():
+    """Builds node_modules if not already present."""
+    if (SERVER_DIR / "node_modules") not in list(SERVER_DIR.rglob("**/")):
+        subprocess.run(["yarn", "--cwd", str(SERVER_DIR.resolve())])
+
+
 @cli.command()
 @click.argument("inputs", nargs=-1, type=click.Path(exists=True, dir_okay=False))
 @click.option(
@@ -170,7 +176,7 @@ def dev(
         click.secho("No Constellations, exiting", fg="blue")
         return
 
-    yarn_dev = subprocess.Popen(["yarn", "--cwd", "constellate-server", "dev"])
+    yarn_dev = subprocess.Popen(["yarn", "--cwd", str(SERVER_DIR.resolve()), "dev"])
 
     class RebuildEventHandler(PatternMatchingEventHandler):
         def on_modified(self, event):
@@ -195,8 +201,10 @@ def dev(
             if retval is not None and retval != 0:
                 # exited with error, restart
                 yarn_dev.terminate()
+                print(SERVER_DIR.resolve())
+                install_if_missing()
                 yarn_dev = subprocess.Popen(
-                    ["yarn", "--cwd", "constellate-server", "dev"]
+                    ["yarn", "--cwd", str(SERVER_DIR.resolve()), "dev"]
                 )
     except Exception as e:
         logger.error(f"Error: {e}", exc_info=True)
@@ -219,7 +227,8 @@ def build_site(constellations_dir: Path):
         click.secho("No Constellations, exiting", fg="blue")
         return
 
-    subprocess.run(["yarn", "--cwd", "constellate-server", "build"])
+    install_if_missing()
+    subprocess.run(["yarn", "--cwd", str(SERVER_DIR.resolve()), "build"])
 
 
 @cli.command()
@@ -234,7 +243,8 @@ def serve_production(constellations_dir: Path):
         click.secho("No Constellations, exiting", fg="blue")
         return
 
-    subprocess.run(["yarn", "--cwd", "constellate-server", "start"])
+    install_if_missing()
+    subprocess.run(["yarn", "--cwd", str(SERVER_DIR.resolve()), "start"])
 
 
 @cli.command()

@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import TextPanel from "../../components/markdown/text_panel";
-import { Constellation, hasImgPanel } from "../../lib/constellate";
+import {Constellation, hasImgPanel} from "../../lib/constellate";
 import PanelContent from "../../components/panels/panel_content";
 import Shortcuts from "../../components/hotkeys";
 import glob from "glob";
@@ -24,33 +24,33 @@ import {
     useEuiTheme,
     useIsWithinBreakpoints,
 } from "@elastic/eui";
-import { useRouter } from "next/router";
+import {useRouter} from "next/router";
 import SideBar from "../../components/side_nav";
 import ThemeSwitcher from "../../components/rho/theme_switcher";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import renderFootnoteBlock from "../../components/markdown/footnotes_collapse";
 
 import themes from "../../../public/constellate_themes/themes";
-import { readFileSync } from "fs";
+import {readFileSync} from "fs";
 import path from "path";
-import { EuiResizablePanel } from "@elastic/eui/src/components/resizable_container/resizable_panel";
-import { EuiResizableButton } from "@elastic/eui/src/components/resizable_container/resizable_button";
+import {EuiResizablePanel} from "@elastic/eui/src/components/resizable_container/resizable_panel";
+import {EuiResizableButton} from "@elastic/eui/src/components/resizable_container/resizable_button";
 import React from "react";
 import NextEuiButton from "../../components/next_eui/button";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
-function StarPage({ constellations }) {
+function StarPage({constellations}) {
     useEffect(renderFootnoteBlock);
     const router = useRouter();
-    const { colorMode } = useEuiTheme();
+    const {colorMode} = useEuiTheme();
     const [isNavOpen, setIsNavOpen] = useState(false);
 
     if (router.isFallback) {
         return <h1>Loading...</h1>;
     }
 
-    const { id } = router.query;
+    const {id} = router.query;
     const constellation = constellations[router.query.constellation as string];
     const starId = Array.isArray(id) ? parseInt(id[0]) : parseInt(id);
     const uuid = "asdf";
@@ -155,12 +155,12 @@ function StarPage({ constellations }) {
                             }}
                             rightSideItems={[
                                 navButton,
-                                <Shortcuts />,
-                                <ThemeSwitcher key="theme-switcher" />,
+                                <Shortcuts/>,
+                                <ThemeSwitcher key="theme-switcher"/>,
                                 nextButton,
                                 prevButton,
                             ]}
-                            rightSideGroupProps={{ style: { alignItems: "center" } }}
+                            rightSideGroupProps={{style: {alignItems: "center"}}}
                             id="pageHeader"
                         ></EuiPageTemplate.Header>
                         {isNavOpen && (
@@ -196,7 +196,7 @@ function StarPage({ constellations }) {
                         )}
                         <EuiPageTemplate.Section
                             id="mainSection"
-                            contentProps={{ style: { height: "100%" } }}
+                            contentProps={{style: {height: "100%"}}}
                         >
                             <EuiResizableContainer
                                 className="eui-fullHeight"
@@ -219,7 +219,7 @@ function StarPage({ constellations }) {
                                                 content={constellation.stars[starId].markdown}
                                             />
                                         </EuiResizablePanel>
-                                        <EuiResizableButton />
+                                        <EuiResizableButton/>
                                         {imgTabContentFunc(EuiResizablePanel, EuiResizableButton)}
                                     </>
                                 )}
