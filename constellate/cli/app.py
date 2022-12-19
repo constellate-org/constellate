@@ -6,6 +6,7 @@ from typing import Sequence, Optional
 import click
 from click.exceptions import MissingParameter
 from constellate.constellate.constellation import Constellation
+from constellate.constellate.config import ConstellateConfig
 from pathlib import Path
 from glob import glob
 import logging
@@ -75,6 +76,18 @@ def _build(inputs: Sequence[str], confirm: bool, no_input: bool, out_dir: Path):
 
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # now incorporate configuration
+    toml_path = Path.cwd() / "constellate.toml"
+
+    if toml_path.exists():
+        conf = ConstellateConfig.from_toml(toml_path)
+    else:
+        conf = ConstellateConfig()
+
+    outer_dir = out_dir.parent.parent
+    conf.to_env_files(outer_dir / ".env.custom.local", outer_dir / ".env.production")
+
+    # write panel files
     panel_path = Path(out_dir / ".panel_servers")
     panel_path.mkdir(parents=True, exist_ok=True)
     py_files = glob(str(panel_path / "*.py"))
@@ -295,10 +308,14 @@ def git_deploy(
                 "You have unsaved work. Commit it before deploying."
             )
         else:
-            curr_head.index.commit("Automated source Constellate commit")
+            r.index.commit("Automated source Constellate commit")
             curr_head = r.head.reference
-            r.heads.build.checkout()
+            try:
+                r.heads.build.checkout()
+            except GitCommandError:
+                raise click.ClickException("You have untracked files that would be overwritten. Add them or ignore them to proceed.")
 
+    r.git.cherry(curr_head)
     shutil.copytree(SERVER_DIR, repo_dir / "constellate-server", dirs_exist_ok=True)
     _build(
         inputs,
@@ -307,7 +324,7 @@ def git_deploy(
         repo_dir / "constellate-server" / "public" / "constellations",
     )
 
-    r.index.add([str(repo_dir.absolute() / "constellate-server" / ".gitignore")])
-    r.index.add([str(repo_dir.absolute() / "constellate-server")], force=False)
+
+    r.git.add(A=True)
     r.index.commit("Automated Constellate build")
     curr_head.checkout()
