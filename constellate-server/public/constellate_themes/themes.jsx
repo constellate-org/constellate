@@ -42,6 +42,7 @@ const themes = {
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xz/fonts@1/serve/cascadia-code.min.css" />
     </>,
     site_title: "Pollard's Rho",
+
     site_logo: '/pollardsrho.svg',
     global: {
       '#essay-title': {
@@ -61,9 +62,9 @@ const themes = {
         },
       },
       font: {
-        family: "effra, sans-serif",
+        family: "effra-cc, sans-serif",
         familyCode: "'Cascadia Code', monospace",
-        featureSettings: "'liga' 1, 'kern' 1, 'tnum' 1"
+        featureSettings: "'liga' 1, 'kern' 1, 'pnum' 1"
       },
     }
   }
