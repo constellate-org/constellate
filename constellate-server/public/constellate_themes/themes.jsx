@@ -61,7 +61,7 @@ const themes = {
         },
       },
       font: {
-        family: "effra-cc, myriad-pro, sans-serif",
+        family: "effra, sans-serif",
         familyCode: "'Cascadia Code', monospace",
         featureSettings: "'liga' 1, 'kern' 1, 'tnum' 1"
       },
