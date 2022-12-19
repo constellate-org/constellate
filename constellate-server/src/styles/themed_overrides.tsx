@@ -43,11 +43,27 @@ export default function CustomStyling() {
       font-feature-settings: ${t.font.featureSettings};
     }
 
-    kbd > kbd {
+    kbd {
+        border-width: 0 !important;
         border-radius: ${t.border.radius.small};
+    }
+
+    kbd::after {
+        /* EUI adds a border to the bottom, but it neglects to deal with nested kbds */
+        border-width: 0px !important;
+    }
+
+    kbd > kbd::after {
+        border-bottom-width: ${t.border.width.thin} !important;
+    }
+
+    kbd > kbd {
+        border-bottom-width: ${t.border.thick} !important;
+        border-bottom-color: ${t.colors.darkShade} !important;
+        border-radius: ${t.border.radius};
         background-color: ${t.colors.lightShade};
         color: ${t.colors.fullShade};
-        border-width: 0px !important;
+        padding-block-end: 6px !important;
     }
 
     .euiText code.euiCode {
