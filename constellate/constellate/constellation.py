@@ -187,7 +187,7 @@ fig = plt.gcf()
 import io
 import base64
 bio = io.BytesIO()
-fig.savefig(bio,  format='svg')
+fig.savefig(bio,  format='svg', bbox_inches='tight')
 bio.seek(0)
 # get rid of xml tag, just include svg
 svg = bio.read().decode()
