@@ -36,6 +36,8 @@ export default function DFPanel(props) {
     const cols = colnames.map(colname => {
         return {
             id: colname,
+            display: colname,
+            displayAsText: colname,
         };
     });
 

@@ -11,3 +11,5 @@ htmlcov
 .ipynb_checkpoints/
 constellate.ipynb
 *.egg-info/
+
+constellate-server/public/constellations/gender-in-ai-language-models-what-s-in-a-name.constellate
