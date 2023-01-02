@@ -1,3 +1,4 @@
+import { useEuiBreakpoint } from '@elastic/eui';
 import { css } from '@emotion/react';
 
 /*
@@ -118,6 +119,13 @@ main {
     height: calc(100% - 40px);
     box-sizing: border-box;
     padding: 2rem;
+}
+
+@media only screen and (max-width: 768px) {
+    #panelTabs div[role = "tabpanel"] {
+        padding: 0.5rem;
+    }
+
 }
 
 body {

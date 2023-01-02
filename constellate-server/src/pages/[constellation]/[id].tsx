@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
 import TextPanel from "../../components/markdown/text_panel";
-import {Constellation, hasImgPanel} from "../../lib/constellate";
+import { Constellation, hasImgPanel } from "../../lib/constellate";
 import PanelContent from "../../components/panels/panel_content";
 import Shortcuts from "../../components/hotkeys";
 import glob from "glob";
@@ -24,33 +24,33 @@ import {
     useEuiTheme,
     useIsWithinBreakpoints,
 } from "@elastic/eui";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import SideBar from "../../components/side_nav";
 import ThemeSwitcher from "../../components/rho/theme_switcher";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import renderFootnoteBlock from "../../components/markdown/footnotes_collapse";
 
 import themes from "../../../public/constellate_themes/themes";
-import {readFileSync} from "fs";
+import { readFileSync } from "fs";
 import path from "path";
-import {EuiResizablePanel} from "@elastic/eui/src/components/resizable_container/resizable_panel";
-import {EuiResizableButton} from "@elastic/eui/src/components/resizable_container/resizable_button";
+import { EuiResizablePanel } from "@elastic/eui/src/components/resizable_container/resizable_panel";
+import { EuiResizableButton } from "@elastic/eui/src/components/resizable_container/resizable_button";
 import React from "react";
-import NextEuiButton from "../../components/next_eui/button";
+import { NextEuiButton, NextEuiButtonIcon } from "../../components/next_eui/button";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
-function StarPage({constellations}) {
+function StarPage({ constellations }) {
     useEffect(renderFootnoteBlock);
     const router = useRouter();
-    const {colorMode} = useEuiTheme();
+    const { colorMode } = useEuiTheme();
     const [isNavOpen, setIsNavOpen] = useState(false);
 
     if (router.isFallback) {
         return <h1>Loading...</h1>;
     }
 
-    const {id} = router.query;
+    const { id } = router.query;
     const constellation = constellations[router.query.constellation as string];
     const starId = Array.isArray(id) ? parseInt(id[0]) : parseInt(id);
     const uuid = "asdf";
@@ -60,15 +60,30 @@ function StarPage({constellations}) {
     const prevId = starId - 1 >= 0 ? starId - 1 : null;
     const nextId = starId + 1 < numIds ? starId + 1 : null;
 
-    const isMobile = useIsWithinBreakpoints(["xs", "s"]);
+    const isMobile = useIsWithinBreakpoints(['xs', 's'])
 
-    const prevButton = (
+    const prevButton = isMobile ? (
+        <Link href={`/${constellation.slug}/${prevId}`} passHref>
+            <NextEuiButtonIcon
+                size="xs"
+                id="prevBtn"
+                rel="prev me"
+                color="text"
+                display="fill"
+                iconType='arrowLeft'
+                aria-label='Last Page'
+                href={`/${constellation.slug}/${prevId}`}
+                isDisabled={prevId === null}
+            />
+        </Link>
+    ) : (
         <Link href={`/${constellation.slug}/${prevId}`} passHref>
             <NextEuiButton
                 size="s"
                 id="prevBtn"
                 rel="prev me"
                 color="text"
+                iconType='arrowLeft'
                 href={`/${constellation.slug}/${prevId}`}
                 isDisabled={prevId === null}
             >
@@ -76,17 +91,31 @@ function StarPage({constellations}) {
             </NextEuiButton>
         </Link>
     );
-    const nextButton = (
+    const nextButton = isMobile ? (
+        <Link href={`/${constellation.slug}/${nextId}`} passHref>
+            <NextEuiButtonIcon
+                size="xs"
+                color="primary"
+                rel="next me"
+                iconType='arrowRight'
+                display="fill"
+                href={`/${constellation.slug}/${nextId}`}
+                id="nextBtn"
+                aria-label='Next Page'
+                isDisabled={nextId === null}
+            />
+        </Link>
+    ) : (
         <Link href={`/${constellation.slug}/${nextId}`} passHref>
             <NextEuiButton
                 size="s"
                 color="primary"
                 fill
                 rel="next me"
+                iconType='arrowRight'
                 href={`/${constellation.slug}/${nextId}`}
                 id="nextBtn"
-                isDisabled={nextId === null}
-            >
+                isDisabled={nextId === null}>
                 Next Page
             </NextEuiButton>
         </Link>
@@ -149,18 +178,19 @@ function StarPage({constellations}) {
                             iconType={theme["site_logo"]}
                             bottomBorder={false}
                             paddingSize="m"
-                            pageTitle={constellation.title}
+                            pageTitle={isMobile ? ' ' : constellation.title}
                             pageTitleProps={{
                                 id: "essay-title",
                             }}
                             rightSideItems={[
                                 navButton,
-                                <Shortcuts/>,
-                                <ThemeSwitcher key="theme-switcher"/>,
+                                <Shortcuts />,
+                                <ThemeSwitcher key="theme-switcher" />,
                                 nextButton,
                                 prevButton,
                             ]}
-                            rightSideGroupProps={{style: {alignItems: "center"}}}
+                            responsive={false}
+                            rightSideGroupProps={{ style: { alignItems: "center" } }}
                             id="pageHeader"
                         ></EuiPageTemplate.Header>
                         {isNavOpen && (
@@ -196,7 +226,7 @@ function StarPage({constellations}) {
                         )}
                         <EuiPageTemplate.Section
                             id="mainSection"
-                            contentProps={{style: {height: "100%"}}}
+                            contentProps={{ style: { height: "100%" } }}
                         >
                             <EuiResizableContainer
                                 className="eui-fullHeight"
@@ -219,7 +249,7 @@ function StarPage({constellations}) {
                                                 content={constellation.stars[starId].markdown}
                                             />
                                         </EuiResizablePanel>
-                                        <EuiResizableButton/>
+                                        <EuiResizableButton />
                                         {imgTabContentFunc(EuiResizablePanel, EuiResizableButton)}
                                     </>
                                 )}
