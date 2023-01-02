@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "constellate_app"
-version = "0.1.7"
+version = "0.1.8"
 description = "Render Jupyter Notebooks as beautiful interactive webapps"
 authors = ["Nicholas Miklaucic <nicholas.miklaucic@gmail.com>"]
 license = "MIT"
