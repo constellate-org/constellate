@@ -16,11 +16,13 @@ import {
     EuiHeaderLogo,
     EuiHeaderSection,
     EuiHeaderSectionItem,
+    EuiHideFor,
     EuiListGroup,
     EuiListGroupItem,
     EuiPageTemplate,
     EuiPanel,
     EuiResizableContainer,
+    EuiShowFor,
     useEuiTheme,
     useIsWithinBreakpoints,
 } from "@elastic/eui";
@@ -60,9 +62,12 @@ function StarPage({ constellations }) {
     const prevId = starId - 1 >= 0 ? starId - 1 : null;
     const nextId = starId + 1 < numIds ? starId + 1 : null;
 
-    const isMobile = useIsWithinBreakpoints(['xs', 's'])
+    const mobileSizes: ('xs' | 's' | 'm' | 'l' | 'xl')[] = ['xs', 's'];
+    const isMobile = useIsWithinBreakpoints(mobileSizes);
+    const showMobile = 'eui-showFor--xs eui-showFor--s'
+    const hideMobile = 'eui-hideFor--xs eui-hideFor--s'
 
-    const prevButton = isMobile ? (
+    const prevButton = <>
         <Link href={`/${constellation.slug}/${prevId}`} passHref>
             <NextEuiButtonIcon
                 size="xs"
@@ -74,9 +79,9 @@ function StarPage({ constellations }) {
                 aria-label='Last Page'
                 href={`/${constellation.slug}/${prevId}`}
                 isDisabled={prevId === null}
+                className={showMobile}
             />
         </Link>
-    ) : (
         <Link href={`/${constellation.slug}/${prevId}`} passHref>
             <NextEuiButton
                 size="s"
@@ -86,12 +91,13 @@ function StarPage({ constellations }) {
                 iconType='arrowLeft'
                 href={`/${constellation.slug}/${prevId}`}
                 isDisabled={prevId === null}
+                className={hideMobile}
             >
                 Last Page
             </NextEuiButton>
         </Link>
-    );
-    const nextButton = isMobile ? (
+    </>;
+    const nextButton = <>
         <Link href={`/${constellation.slug}/${nextId}`} passHref>
             <NextEuiButtonIcon
                 size="xs"
@@ -103,9 +109,9 @@ function StarPage({ constellations }) {
                 id="nextBtn"
                 aria-label='Next Page'
                 isDisabled={nextId === null}
+                className={showMobile}
             />
         </Link>
-    ) : (
         <Link href={`/${constellation.slug}/${nextId}`} passHref>
             <NextEuiButton
                 size="s"
@@ -115,11 +121,14 @@ function StarPage({ constellations }) {
                 iconType='arrowRight'
                 href={`/${constellation.slug}/${nextId}`}
                 id="nextBtn"
-                isDisabled={nextId === null}>
+                isDisabled={nextId === null}
+                className={hideMobile}
+            >
                 Next Page
             </NextEuiButton>
         </Link>
-    );
+    </>
+
 
     const imgTabContentFunc = (EuiResizablePanel, EuiResizableButton) => {
         if (shouldRenderImg) {
@@ -178,7 +187,7 @@ function StarPage({ constellations }) {
                             iconType={theme["site_logo"]}
                             bottomBorder={false}
                             paddingSize="m"
-                            pageTitle={isMobile ? ' ' : constellation.title}
+                            pageTitle={constellation.title}
                             pageTitleProps={{
                                 id: "essay-title",
                             }}
@@ -211,7 +220,7 @@ function StarPage({ constellations }) {
                                             <EuiListGroupItem
                                                 size="xs"
                                                 wrapText
-                                                label={"© Nicholas Miklaucic 2022"}
+                                                label={"© Nicholas Miklaucic 2023"}
                                             />
                                             <EuiListGroupItem
                                                 size="xs"
@@ -229,8 +238,8 @@ function StarPage({ constellations }) {
                             contentProps={{ style: { height: "100%" } }}
                         >
                             <EuiResizableContainer
-                                className="eui-fullHeight"
-                                direction={isMobile ? "vertical" : "horizontal"}
+                                className={"eui-fullHeight " + showMobile}
+                                direction="vertical"
                             >
                                 {(EuiResizablePanel, EuiResizableButton) => (
                                     <>
@@ -249,7 +258,34 @@ function StarPage({ constellations }) {
                                                 content={constellation.stars[starId].markdown}
                                             />
                                         </EuiResizablePanel>
-                                        <EuiResizableButton />
+                                        {/* for some reason this doesn't work */}
+                                        {/* <EuiResizableButton id="vertResizeButton" /> */}
+                                        {imgTabContentFunc(EuiResizablePanel, EuiResizableButton)}
+                                    </>
+                                )}
+                            </EuiResizableContainer>
+                            <EuiResizableContainer
+                                className={"eui-fullHeight " + hideMobile}
+                                direction="horizontal"
+                            >
+                                {(EuiResizablePanel, EuiResizableButton) => (
+                                    <>
+                                        <EuiResizablePanel
+                                            initialSize={shouldRenderImg ? 50 : 100}
+                                            minSize="20px"
+                                            scrollable={false}
+                                            grow={true}
+                                            id="textPanelContr"
+                                            paddingSize="none"
+                                            color="plain"
+                                            hasShadow
+                                            hasBorder
+                                        >
+                                            <TextPanel
+                                                content={constellation.stars[starId].markdown}
+                                            />
+                                        </EuiResizablePanel>
+                                        <EuiResizableButton id="horizResizeButton" isHorizontal={true} />
                                         {imgTabContentFunc(EuiResizablePanel, EuiResizableButton)}
                                     </>
                                 )}
@@ -292,9 +328,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps() {
     /* const res = await fetch(
-     *   'file:///home/nicholas/programs/constellations/metropolis-hastings/mcmc.constellate.json'
-     * );
-     * const constellation: Constellation = await res.json();  */
+        *   'file:///home/nicholas/programs/constellations/metropolis-hastings/mcmc.constellate.json'
+        * );
+        * const constellation: Constellation = await res.json();  */
 
     const constellations = {};
     glob

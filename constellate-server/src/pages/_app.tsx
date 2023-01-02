@@ -12,6 +12,7 @@ import footnotesStyles from "../styles/footnotes.styles";
 import themes from "../../public/constellate_themes/themes";
 import Script from "next/script";
 import Link from "next/link";
+import React from "react";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
@@ -23,32 +24,34 @@ const theme = themes[process.env.CONSTELLATE_THEME];
  * @see https://nextjs.org/docs/advanced-features/custom-app
  */
 const EuiApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
-  <>
-    <Head>
-      {/* You can override this in other pages - see index.tsx for an example */}
-      <title>{theme["site_title"]}</title>
-    </Head>
-    <Script
-      type="module"
-      src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/copy-tex.mjs"
-      integrity="sha384-+gSYJ3yzY30+a6FGYJXOx9swmWs5oPKEi1AeCsAxsLexABlUXgHXkOkEZCj0Lz8U"
-      crossOrigin="anonymous"
-    />
-    {/* <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
+    <>
+        <Head>
+            {/* You can override this in other pages - see index.tsx for an example */}
+            <title>{theme["site_title"]}</title>
+        </Head>
+        <Script
+            type="module"
+            src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/copy-tex.mjs"
+            integrity="sha384-+gSYJ3yzY30+a6FGYJXOx9swmWs5oPKEi1AeCsAxsLexABlUXgHXkOkEZCj0Lz8U"
+            crossOrigin="anonymous"
+        />
+        {/* <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
     <Script defer src="https://pyscript.net/alpha/pyscript.js" /> */}
-    <Global styles={globalStyles} />
-    <Global styles={footnotesStyles} />
-    <Global styles={theme["global"]} />
-    {theme.HEAD}
-    <Theme>
-      <Rho>
-        <ThemedOverrides />
-        <EuiErrorBoundary>
-          <Component {...pageProps} />
-        </EuiErrorBoundary>
-      </Rho>
-    </Theme>
-  </>
+        <Global styles={globalStyles} />
+        <Global styles={footnotesStyles} />
+        <Global styles={theme["global"]} />
+        {theme.HEAD}
+        <Theme>
+            <Rho>
+                <ThemedOverrides />
+                <EuiErrorBoundary>
+                    <React.StrictMode>
+                        <Component {...pageProps} />
+                    </React.StrictMode>
+                </EuiErrorBoundary>
+            </Rho>
+        </Theme>
+    </>
 );
 
 export default EuiApp;

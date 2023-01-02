@@ -91,6 +91,7 @@ class SideBarClass extends React.Component<{
                     ]}
                     heading="Outline"
                     truncate={false}
+                    mobileBreakpoints={[]}
                     headingProps={{ screenReaderOnly: true }}
                 />
             </>

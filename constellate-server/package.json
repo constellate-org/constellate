@@ -34,7 +34,8 @@
     "url": "https://github.com/elastic/next-eui-starter/issues"
   },
   "dependencies": {
-    "@elastic/eui": "^63.0.1",
+    "@elastic/eui": "^72.0.0",
+    "@emotion/css": "^11.10.5",
     "@types/react": "^18.0.17",
     "@types/react-dom": "^18.0.6",
     "interweave": "^13.0.0",
@@ -54,7 +55,8 @@
     "trim": "1.0.1",
     "vega": "^5.22.1",
     "vega-lite": "^5.2.0",
-    "vega-tooltip": "^0.28.0"
+    "vega-tooltip": "^0.28.0",
+    "webpack": "^5.75.0"
   },
   "devDependencies": {
     "@elastic/datemath": "^5.0.3",

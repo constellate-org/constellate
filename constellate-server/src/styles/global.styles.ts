@@ -126,6 +126,9 @@ main {
         padding: 0.5rem;
     }
 
+    #essay-title {
+        display: none;
+    }
 }
 
 body {
