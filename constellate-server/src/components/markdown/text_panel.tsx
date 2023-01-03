@@ -57,7 +57,7 @@ parsingList.splice(3, 1);
 
 // parsingList.splice(1, 0, [remarkGfm, {}]);
 parsingList.push([MathMarkdownParser, { singleDollar: true }]);
-parsingList.push([parsingList.push([remarkFootnotes, {}]);
+parsingList.push([remarkFootnotes, {}]);
 const processingList = getDefaultEuiMarkdownProcessingPlugins();
 
 processingList[1][1].components.checkboxplugin =
@@ -76,11 +76,11 @@ processingList[1][1].components.kbd = doubleKbd;
 
 /* processingList.splice(1, 0, [rehypeRaw]); */
 
-console.log(parsingList);
+// console.log(parsingList);
 // @ts-ignore
 // processingList.splice(2, 0, [rehypeStringify, { allowDangerousHtml: true }]);
 // @ts-ignore
-console.log(processingList);
+// console.log(processingList);
 
 export default function TextPanel(props) {
     return (
