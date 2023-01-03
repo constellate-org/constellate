@@ -31,6 +31,7 @@ const nextConfig = {
     // images: {
     //   layoutRaw: true
     // }d
+    appDir: false
   },
 
   /**

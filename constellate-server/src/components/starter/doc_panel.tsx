@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react';
 import Head from 'next/head';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import { EuiPanel, useEuiTheme } from '@elastic/eui';
 import { imageLoader } from '../../lib/loader';
 import { useTheme } from '../theme';

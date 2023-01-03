@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Link from 'next/link';
 import {
   EuiHeader,
@@ -24,19 +24,19 @@ const Header = () => {
       sections={[
         {
           items: [
-            <Link key="logo" href="/" passHref>
-              <a css={styles.logo}>
-                <Image
-                  width={24}
-                  height={24}
-                  src="/pollardsrho.svg"
-                  alt="rho logo"
-                  loader={imageLoader}
-                />
-                <EuiTitle size="xxs">
-                  <span>Next.js EUI Starter</span>
-                </EuiTitle>
-              </a>
+            <Link key="logo" href="/" passHref css={styles.logo}>
+
+              <Image
+                width={24}
+                height={24}
+                src="/pollardsrho.svg"
+                alt="rho logo"
+                loader={imageLoader}
+              />
+              <EuiTitle size="xxs">
+                <span>Next.js EUI Starter</span>
+              </EuiTitle>
+
             </Link>,
           ],
           borders: 'none',

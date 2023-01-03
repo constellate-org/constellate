@@ -3,6 +3,9 @@
     "plugins": [
       {
         "name": "typescript-plugin-css-modules"
+      },
+      {
+        "name": "next"
       }
     ],
     "target": "es5",
@@ -26,7 +29,8 @@
     "incremental": true
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+    ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

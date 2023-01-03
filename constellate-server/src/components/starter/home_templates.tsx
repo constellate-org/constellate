@@ -9,7 +9,7 @@ import {
   EuiPanel,
   EuiButtonEmpty,
 } from '@elastic/eui';
-import Image from 'next/image';
+import Image from "next/legacy/image";
 import Link from 'next/link';
 import { imageLoader } from '../../lib/loader';
 import { useTheme } from '../theme';
@@ -49,73 +49,71 @@ const HomeTemplates: FunctionComponent = () => {
     </>
   );
 
-  return (
-    <>
-      <EuiTitle size="l">
-        <h2>Easy start with templates</h2>
-      </EuiTitle>
-      <EuiSpacer size="m" />
-      <EuiText>
-        <p>
-          To help you get started we provide two templates with some
-          out-of-the-box patterns.
-        </p>
-      </EuiText>
+  return <>
+    <EuiTitle size="l">
+      <h2>Easy start with templates</h2>
+    </EuiTitle>
+    <EuiSpacer size="m" />
+    <EuiText>
+      <p>
+        To help you get started we provide two templates with some
+        out-of-the-box patterns.
+      </p>
+    </EuiText>
 
-      <EuiSpacer size="xxl" />
+    <EuiSpacer size="xxl" />
 
-      <EuiFlexGroup gutterSize="xl">
-        <EuiFlexItem>
-          <EuiPanel color="transparent" hasBorder css={styles.panel}>
-            {circles}
-            <div css={styles.panelInner}>
-              <EuiTitle size="s">
-                <h3>Kibana template</h3>
-              </EuiTitle>
-              <EuiSpacer size="s" />
-              <EuiText grow={false}>
-                <p>
-                  This template comes with a collapsible navbar and two stacked
-                  headers just like Kibana is today. On the top header, you can
-                  toggle the dark and light theme.
-                </p>
+    <EuiFlexGroup gutterSize="xl">
+      <EuiFlexItem>
+        <EuiPanel color="transparent" hasBorder css={styles.panel}>
+          {circles}
+          <div css={styles.panelInner}>
+            <EuiTitle size="s">
+              <h3>Kibana template</h3>
+            </EuiTitle>
+            <EuiSpacer size="s" />
+            <EuiText grow={false}>
+              <p>
+                This template comes with a collapsible navbar and two stacked
+                headers just like Kibana is today. On the top header, you can
+                toggle the dark and light theme.
+              </p>
 
-                <Link href="/kibana" passHref>
-                  <EuiButtonEmpty flush="both">
-                    <strong>Preview Kibana template</strong>
-                  </EuiButtonEmpty>
-                </Link>
-              </EuiText>
-            </div>
-          </EuiPanel>
-        </EuiFlexItem>
-        <EuiFlexItem>
-          <EuiPanel color="transparent" hasBorder css={styles.panel}>
-            {circles}
-            <div css={styles.panelInner}>
-              <EuiTitle size="s">
-                <h3>Docs template</h3>
-              </EuiTitle>
-              <EuiSpacer size="s" />
-              <EuiText grow={false}>
-                <p>
-                  This template comes with a side nav and one header where you
-                  can toggle the dark and light theme. It has a similar layout
-                  as the EUI docs site or Elastic docs.
-                </p>
+              <Link href="/kibana" passHref legacyBehavior>
+                <EuiButtonEmpty flush="both">
+                  <strong>Preview Kibana template</strong>
+                </EuiButtonEmpty>
+              </Link>
+            </EuiText>
+          </div>
+        </EuiPanel>
+      </EuiFlexItem>
+      <EuiFlexItem>
+        <EuiPanel color="transparent" hasBorder css={styles.panel}>
+          {circles}
+          <div css={styles.panelInner}>
+            <EuiTitle size="s">
+              <h3>Docs template</h3>
+            </EuiTitle>
+            <EuiSpacer size="s" />
+            <EuiText grow={false}>
+              <p>
+                This template comes with a side nav and one header where you
+                can toggle the dark and light theme. It has a similar layout
+                as the EUI docs site or Elastic docs.
+              </p>
 
-                <Link href="/docs" passHref>
-                  <EuiButtonEmpty flush="both">
-                    <strong>Preview Docs template</strong>
-                  </EuiButtonEmpty>
-                </Link>
-              </EuiText>
-            </div>
-          </EuiPanel>
-        </EuiFlexItem>
-      </EuiFlexGroup>
-    </>
-  );
+              <Link href="/docs" passHref legacyBehavior>
+                <EuiButtonEmpty flush="both">
+                  <strong>Preview Docs template</strong>
+                </EuiButtonEmpty>
+              </Link>
+            </EuiText>
+          </div>
+        </EuiPanel>
+      </EuiFlexItem>
+    </EuiFlexGroup>
+  </>;
 };
 
 export default HomeTemplates;

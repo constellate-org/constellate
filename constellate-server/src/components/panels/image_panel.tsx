@@ -5,7 +5,7 @@ import {
   EuiTabbedContent,
 } from '@elastic/eui';
 
-import Image from 'next/image';
+import Image from "next/legacy/image";
 
 export default function ImagePanel(props) {
   const { url, code } = props;

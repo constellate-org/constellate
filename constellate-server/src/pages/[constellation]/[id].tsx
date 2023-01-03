@@ -68,7 +68,7 @@ function StarPage({ constellations }) {
     const hideMobile = 'eui-hideFor--xs eui-hideFor--s'
 
     const prevButton = <>
-        <Link href={`/${constellation.slug}/${prevId}`} passHref>
+        <Link href={`/${constellation.slug}/${prevId}`} passHref legacyBehavior>
             <NextEuiButtonIcon
                 size="xs"
                 id="prevBtn"
@@ -82,7 +82,7 @@ function StarPage({ constellations }) {
                 className={showMobile}
             />
         </Link>
-        <Link href={`/${constellation.slug}/${prevId}`} passHref>
+        <Link href={`/${constellation.slug}/${prevId}`} passHref legacyBehavior>
             <NextEuiButton
                 size="s"
                 id="prevBtn"
@@ -98,7 +98,7 @@ function StarPage({ constellations }) {
         </Link>
     </>;
     const nextButton = <>
-        <Link href={`/${constellation.slug}/${nextId}`} passHref>
+        <Link href={`/${constellation.slug}/${nextId}`} passHref legacyBehavior>
             <NextEuiButtonIcon
                 size="xs"
                 color="primary"
@@ -112,7 +112,7 @@ function StarPage({ constellations }) {
                 className={showMobile}
             />
         </Link>
-        <Link href={`/${constellation.slug}/${nextId}`} passHref>
+        <Link href={`/${constellation.slug}/${nextId}`} passHref legacyBehavior>
             <NextEuiButton
                 size="s"
                 color="primary"

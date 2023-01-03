@@ -47,7 +47,7 @@ const HomeHero: FunctionComponent = () => {
             it!
           </p>
 
-          <Link href="/getting-started" passHref>
+          <Link href="/getting-started" passHref legacyBehavior>
             <EuiButton>
               <strong>Getting started</strong>
             </EuiButton>
