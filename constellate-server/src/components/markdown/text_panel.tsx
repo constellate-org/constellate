@@ -29,7 +29,6 @@ import remarkFootnotes from "remark-footnotes";
 import remarkSmartypants from "remark-smartypants";
 import remarkNumberedFootnoteLabels from "remark-numbered-footnote-labels";
 import rehypeRaw from "rehype-raw";
-import remarkGfm from "remark-gfm";
 import rehypeStringify from "rehype-stringify";
 import React from "react";
 
@@ -56,11 +55,9 @@ const parsingList = getDefaultEuiMarkdownParsingPlugins();
 // remove remark-breaks: this matches standard Markdown syntax
 parsingList.splice(3, 1);
 
+// parsingList.splice(1, 0, [remarkGfm, {}]);
 parsingList.push([MathMarkdownParser, { singleDollar: true }]);
-parsingList.push([remarkSmartypants, {}]);
-parsingList.push([remarkFootnotes, {}]);
-// parsingList.push([DebugParser, {}]);
-// parsingList.push([remarkGfm, {}]);
+parsingList.push([parsingList.push([remarkFootnotes, {}]);
 const processingList = getDefaultEuiMarkdownProcessingPlugins();
 
 processingList[1][1].components.checkboxplugin =
@@ -77,13 +74,13 @@ function doubleKbd(props) {
 }
 processingList[1][1].components.kbd = doubleKbd;
 
-processingList.splice(processingList.length - 1, 0, [rehypeRaw]);
+/* processingList.splice(1, 0, [rehypeRaw]); */
 
-// console.log(parsingList);
+console.log(parsingList);
 // @ts-ignore
 // processingList.splice(2, 0, [rehypeStringify, { allowDangerousHtml: true }]);
 // @ts-ignore
-// console.log(processingList);
+console.log(processingList);
 
 export default function TextPanel(props) {
     return (

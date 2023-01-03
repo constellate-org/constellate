@@ -43,7 +43,6 @@ import { NextEuiButton, NextEuiButtonIcon } from "../../components/next_eui/butt
 const theme = themes[process.env.CONSTELLATE_THEME];
 
 function StarPage({ constellations }) {
-    useEffect(renderFootnoteBlock);
     const router = useRouter();
     const { colorMode } = useEuiTheme();
     const [isNavOpen, setIsNavOpen] = useState(false);
