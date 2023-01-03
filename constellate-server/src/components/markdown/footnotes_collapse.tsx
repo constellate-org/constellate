@@ -1,5 +1,5 @@
-import ReactDOM from 'react-dom';
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { createRoot } from 'react-dom/client'
 import {
     EuiAccordion,
     EuiToolTip,
@@ -64,15 +64,15 @@ export default function renderFootnoteBlock() {
 
             el.innerHTML = `${fnNum}`;
             const elHtml = <div dangerouslySetInnerHTML={{ __html: el.outerHTML }} />;
-            ReactDOM.render(
-                <span>
-                    <EuiToolTip className="fn-tooltip-div" content={content}>{elHtml}</EuiToolTip>
-                </span>,
-                temp,
-                () => {
+
+            const root = createRoot(temp);
+            root.render(
+                <span ref={() => {
                     console.log('Wrapping footnote reference...\n', temp);
                     el.replaceWith(temp);
-                }
+                }}>
+                    <EuiToolTip className="fn-tooltip-div" content={content}>{elHtml}</EuiToolTip>
+                </span>,
             );
         });
     // render footnotes using collapse
@@ -90,6 +90,7 @@ export default function renderFootnoteBlock() {
                 />
             );
             el.innerHTML = '';
-            ReactDOM.render(<FootnotesCollapse inner={content} isOpen={false} />, el);
+            const root = createRoot(el);
+            root.render(<FootnotesCollapse inner={content} isOpen={false} />);
         });
 }
