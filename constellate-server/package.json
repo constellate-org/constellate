@@ -1,9 +1,16 @@
 {
-  "name": "constellate",
+  "name": "@elastic/next-eui-starter",
   "private": true,
-  "description": "Interactive webapps from Jupyter notebooks",
+  "description": "Start building protoypes quickly with the Next.js EUI Starter",
   "version": "1.0.0",
-  "author": "Nicholas Miklaucic <rory@elastic.co>",
+  "author": "Rory Hunter <rory@elastic.co>",
+  "keywords": [
+    "next",
+    "kibana",
+    "eui",
+    "elastic",
+    "typescript"
+  ],
   "engines": {
     "node": ">=12.22.0"
   },
@@ -12,7 +19,7 @@
     "analyze": "ANALYZE=true yarn build",
     "build": "rm -f public/themes/*.min.css && next build",
     "build-docs": "yarn lint && bash scripts/update-docs.sh",
-    "dev": "next dev",
+    "dev": "next",
     "lint": "next lint",
     "start": "next start",
     "test-docs": "yarn lint && bash scripts/test-docs.sh",
