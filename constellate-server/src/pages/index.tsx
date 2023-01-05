@@ -51,8 +51,9 @@ function findImage(constellation: Constellation, colorMode: string, styles) {
         return (
             <EuiImage
                 size="fullWidth"
-                url="https://www.nasa.gov/sites/default/files/thumbnails/image/crab-nebula-mosaic.jpg"
-                alt="Crab nebula"
+                url="https://upload.wikimedia.org/wikipedia/commons/c/c1/The_Reflection_Nebula_in_Orion.jpg"
+                alt="Nebula in a constellation"
+                title="NASA; Public Domain; via Wikimedia Commons"
             />
         );
     } else {
