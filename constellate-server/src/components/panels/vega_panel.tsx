@@ -1,9 +1,13 @@
-import { EuiCodeBlock, EuiPanel, EuiTabbedContent, UseEuiTheme, useEuiTheme, withEuiTheme } from "@elastic/eui";
-import { Vega } from "react-vega";
+import { EuiPanel, EuiTabbedContent, UseEuiTheme, useEuiTheme, withEuiTheme } from "@elastic/eui";
 import rho_dark from "../../../public/vega_rho_dark.json";
 import rho_light from "../../../public/vega_rho_light.json";
 import React from "react";
 import { Handler } from 'vega-tooltip';
+import dynamic from 'next/dynamic'
+import SrcBlock from "./src_block";
+
+// this is a big library, so only load it when it's needed
+const Vega = dynamic(() => import('react-vega').then((mod) => mod.Vega))
 
 type VegaProps = {
     code: any;
@@ -44,18 +48,9 @@ class VegaPanelInner extends React.Component<VegaProps> {
                 name: "Code",
                 className: "eui-fullHeight",
                 content: (
-                    <EuiCodeBlock
-                        language="python"
-                        lineNumbers
-                        overflowHeight="100%"
-                        fontSize="m"
-                        paddingSize="m"
-                        isCopyable={true}
-                        isVirtualized
-                        className="codeBlockEmbed"
-                    >
+                    <SrcBlock>
                         {code}
-                    </EuiCodeBlock>
+                    </SrcBlock>
                 ),
             },
         ];

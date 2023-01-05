@@ -34,6 +34,7 @@ const EuiApp: FunctionComponent<AppProps> = ({ Component, pageProps }) => (
             src="https://cdn.jsdelivr.net/npm/katex@0.15.3/dist/contrib/copy-tex.mjs"
             integrity="sha384-+gSYJ3yzY30+a6FGYJXOx9swmWs5oPKEi1AeCsAxsLexABlUXgHXkOkEZCj0Lz8U"
             crossOrigin="anonymous"
+            strategy="lazyOnload"
         />
         {/* <link rel="stylesheet" href="https://pyscript.net/alpha/pyscript.css" />
     <Script defer src="https://pyscript.net/alpha/pyscript.js" /> */}

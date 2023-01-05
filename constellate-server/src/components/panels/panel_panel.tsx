@@ -1,7 +1,6 @@
 import React from "react";
 import {
     withEuiTheme,
-    EuiCodeBlock,
     EuiTabbedContent,
     UseEuiTheme,
     EuiLoadingChart,
@@ -11,6 +10,7 @@ import { MarkdownPanel } from "../../lib/constellate";
 import panelPanelStyles from "./panel_panel.styles";
 import Script from "next/script";
 import { render } from "react-dom";
+import SrcBlock from "./src_block";
 
 type PanelProps = {
     star: MarkdownPanel;
@@ -177,17 +177,9 @@ class PanelPanelInner extends React.Component<PanelProps, PanelState> {
                 name: "Code",
                 className: "eui-fullHeight",
                 content: (
-                    <EuiCodeBlock
-                        language="python"
-                        lineNumbers
-                        overflowHeight="100%"
-                        fontSize="m"
-                        paddingSize="m"
-                        isCopyable={true}
-                        id="codeBlockEmbed"
-                    >
+                    <SrcBlock>
                         {this.props.star.panel}
-                    </EuiCodeBlock>
+                    </SrcBlock>
                 ),
             },
         ];

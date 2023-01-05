@@ -1,6 +1,4 @@
 import {
-    EuiCodeBlock,
-    EuiDataGrid,
     EuiFlexGroup,
     EuiFlexItem,
     EuiPanel,
@@ -8,6 +6,12 @@ import {
 } from '@elastic/eui';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
+
+import dynamic from 'next/dynamic'
+import SrcBlock from './src_block';
+
+// this library is very large, so only use it if it's needed for a panel
+const EuiDataGrid = dynamic(() => import('@elastic/eui').then((mod) => mod.EuiDataGrid))
 
 // Data Grid assumes all string values, which is a little weird but whatever
 export function to_strings(data) {
@@ -112,17 +116,9 @@ export default function DFPanel(props) {
             name: 'Code',
             className: 'eui-fullHeight',
             content: (
-                <EuiCodeBlock
-                    language="python"
-                    lineNumbers
-                    overflowHeight="100%"
-                    fontSize="m"
-                    paddingSize="m"
-                    isCopyable={true}
-                    isVirtualized
-                    className="codeBlockEmbed">
+                <SrcBlock>
                     {code}
-                </EuiCodeBlock>
+                </SrcBlock>
             ),
         },
     ];
