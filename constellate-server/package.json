@@ -1,18 +1,16 @@
 {
-  "name": "@elastic/next-eui-starter",
+  "name": "constellate-server",
   "private": true,
-  "description": "Start building protoypes quickly with the Next.js EUI Starter",
+  "description": "Constellate server",
   "version": "1.0.0",
-  "author": "Rory Hunter <rory@elastic.co>",
+  "author": "Nicholas Miklaucic <nicholas.miklaucic@gmail.com",
   "keywords": [
-    "next",
-    "kibana",
-    "eui",
     "elastic",
-    "typescript"
+    "constellate",
+    "next"
   ],
   "engines": {
-    "node": ">=12.22.0"
+    "node": ">=16.0"
   },
   "license": "Apache-2.0",
   "scripts": {
@@ -43,7 +41,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hotkeys": "^2.0.0",
-    "react-vega": "^7.5.1",
+    "react-vega": "^7.6.0",
     "rehype-raw": "^6.1.1",
     "rehype-stringify": "^9.0.3",
     "remark-footnotes": "2.0",

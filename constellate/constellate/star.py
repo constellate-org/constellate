@@ -433,8 +433,9 @@ class MarkdownWidget(Star):
 
 
 class MarkdownDataframe(Star):
-    star_type = "markdown_dataframe"
     """A Star with Markdown and a Pandas DataFrame."""
+
+    star_type = "markdown_dataframe"
 
     def __init__(self, md, code, df_expr):
         super().__init__()

@@ -1,5 +1,5 @@
-import { useEuiBreakpoint } from '@elastic/eui';
-import { css } from '@emotion/react';
+import { useEuiBreakpoint } from "@elastic/eui";
+import { css } from "@emotion/react";
 
 /*
 Most of these styles really shouldn't be here, and in an ideal world, once Emotion
@@ -8,188 +8,182 @@ to override some parts of the default theme without making a whole new one.
 */
 
 const globalStyles = css`
-
-html {
+  html {
     font-size: 100%;
-}
+  }
 
-#__next {
+  #__next {
     height: 100%;
-}
+  }
 
-.euiCodeBlock .euiCodeBlock__code {
+  .euiCodeBlock .euiCodeBlock__code {
     font-family: inherit;
-}
+  }
 
-#textContent code.euiCode {
-    font-size: 80%;
-}
-
-a {
+  a {
     color: #0077cc;
-}
+  }
 
-* {
+  * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-}
+  }
 
-body {
+  body {
     width: 100vw;
     height: 100vh;
-}
+  }
 
-_next {
+  _next {
     width: 100%;
     height: 100%;
-}
+  }
 
-#mainGroup {
+  #mainGroup {
+  }
 
-}
-
-.euiPageTemplate {
+  .euiPageTemplate {
     height: 100%;
     width: 100%;
     overflow: hidden;
-}
+  }
 
-main {
+  main {
     height: 100%;
-}
+  }
 
-#pageHeader {
+  #pageHeader {
+  }
 
-}
+  #mainSection {
+    flex-grow: 1;
+    min-height: 0;
+  }
 
-#mainSection {
-   flex-grow: 1;
-   min-height: 0;
-}
+  #pageHeader .euiPageHeaderContent__top {
+  }
 
-#pageHeader .euiPageHeaderContent__top {
+  #pageHeader .euiPageHeaderContent__top .euiFlexItem {
+    margin-top: 0;
+    margin-bottom: 0;
+    align-content: center;
+  }
 
-}
+  .euiBody--headerIsFixed {
+    padding-top: 48px;
+  }
 
-#pageHeader .euiPageHeaderContent__top .euiFlexItem {
-   margin-top: 0;
-   margin-bottom: 0;
-   align-content: center;
-}
+  .euiBody--headerIsFixed .euiCollapsibleNav {
+    top: 48px;
+    height: calc(100% - 48px);
+  }
 
-.euiBody--headerIsFixed {
-  padding-top: 48px;
-}
+  .euiButton {
+    font-family: inherit;
+  }
 
-.euiBody--headerIsFixed .euiCollapsibleNav {
-  top: 48px;
-  height: calc(100% - 48px);
-}
-
-.euiButton {
-  font-family: inherit;
-}
-
-
-.euiHeaderLogo__text {
+  .euiHeaderLogo__text {
     font-size: 22px !important;
     font-weight: 400 !important;
-}
+  }
 
-
-#main {
+  #main {
     width: 100%;
     height: 100%;
-}
+  }
 
-#main > div {
+  #main > div {
     height: 100%;
-}
+  }
 
-.margin2 {
+  .margin2 {
     margin: 2rem;
-}
+  }
 
-#latexContent {
+  #latexContent {
     border-radius: 6px;
-}
+  }
 
-#panelTabs div[role="tabpanel"] {
+  #panelTabs div[role="tabpanel"] {
     height: calc(100% - 40px);
     box-sizing: border-box;
     padding: 2rem;
-}
+  }
 
-@media only screen and (max-width: 768px) {
-    #panelTabs div[role = "tabpanel"] {
-        padding: 0.5rem;
+  #essay-title img {
+    vertical-align: -20%;
+  }
+
+  @media only screen and (max-width: 768px) {
+    #panelTabs div[role="tabpanel"] {
+      padding: 0.5rem;
     }
 
     #essay-title {
-        display: none;
+      display: none;
     }
-}
+  }
 
-body {
+  body {
     transition-delay: 0s;
     transition-duration: 0.3s;
-    transition-timing-function: ease-in-out
-}
+    transition-timing-function: ease-in-out;
+  }
 
-.euiFlyout.euiFlyout--push.collapseNavAnimate {
+  .euiFlyout.euiFlyout--push.collapseNavAnimate {
     animation-duration: 0.3s;
-    animation-timing-function: ease-in-out
-}
+    animation-timing-function: ease-in-out;
+  }
 
-#imgEmbedContainer {
+  #imgEmbedContainer {
     width: 100%;
     height: 100%;
-}
+  }
 
-#imgEmbedContent {
+  #imgEmbedContent {
     overflow: auto;
     width: 100%;
     height: 100%;
     padding: 1rem;
     border-radius: 6px;
-}
+  }
 
-img.cardImg {
+  img.cardImg {
     filter: blur(3px);
-}
+  }
 
-#codePanel {
+  #codePanel {
     width: 100%;
-padding: 1rem;
-}
+    padding: 1rem;
+  }
 
-.genericPanel div.euiCodeBlock {
+  .genericPanel div.euiCodeBlock {
     border-radius: 6px;
-}
+  }
 
-#panelTabs div figure {
+  #panelTabs div figure {
     text-align: center;
     max-height: 100%;
-}
+  }
 
-#mplImg {
+  #mplImg {
     max-width: 100%;
     max-height: 100%;
     padding: 1rem;
-}
+  }
 
-#imgEmbedContent > div.bk.bk-root {
+  #imgEmbedContent > div.bk.bk-root {
     overflow: none;
-}
+  }
 
-.genericPanel {
+  .genericPanel {
     display: flex;
     align-items: center;
     justify-content: center;
-}
+  }
 
-#textContent {
+  #textContent {
     max-width: calc(65ch + 10px);
     margin-left: auto;
     margin-right: auto;
@@ -204,19 +198,17 @@ padding: 1rem;
     // margin-top: calc(40px);
     // this color will get set to the proper EUI value
     // border-top: 1px solid grey;
-}
+  }
 
-
-.noTopBorderRadius {
+  .noTopBorderRadius {
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
-}
+  }
 
-.noBottomBorderRadius {
+  .noBottomBorderRadius {
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
-}
-
+  }
 `;
 
 export default globalStyles;

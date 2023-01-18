@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-var-requires,@typescript-eslint/no-use-before-define,@typescript-eslint/no-empty-function,prefer-template */
-const crypto = require('crypto');
-const fs = require('fs');
-const glob = require('glob');
-const path = require('path');
-const iniparser = require('iniparser');
+const crypto = require("crypto");
+const fs = require("fs");
+const glob = require("glob");
+const path = require("path");
+const iniparser = require("iniparser");
 
-const withBundleAnalyzer = require('@next/bundle-analyzer');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const { IgnorePlugin } = require('webpack');
+const withBundleAnalyzer = require("@next/bundle-analyzer");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const { IgnorePlugin } = require("webpack");
 
 /**
  * If you are deploying your site under a directory other than `/` e.g.
@@ -15,11 +15,11 @@ const { IgnorePlugin } = require('webpack');
  * We don't need this during local development, because everything is
  * available under `/`.
  */
-const usePathPrefix = process.env.PATH_PREFIX === 'true';
+const usePathPrefix = process.env.PATH_PREFIX === "true";
 
-const pathPrefix = usePathPrefix ? derivePathPrefix() : '';
+const pathPrefix = usePathPrefix ? derivePathPrefix() : "";
 
-const themeConfig = buildThemeConfig();                   //
+const themeConfig = buildThemeConfig(); //
 
 const nextConfig = {
   /** Disable the `X- Powered - By: Next.js` response header. */
@@ -31,7 +31,7 @@ const nextConfig = {
     // images: {
     //   layoutRaw: true
     // }d
-    appDir: false
+    appDir: false,
   },
 
   /**
@@ -42,7 +42,8 @@ const nextConfig = {
   basePath: pathPrefix,
 
   images: {
-    loader: 'custom',
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   /**
@@ -74,13 +75,13 @@ const nextConfig = {
     // browser by default. We need to configure the build so that these
     // features are either ignored or replaced with stub implementations.
     if (isServer) {
-      config.externals = config.externals.map(eachExternal => {
-        if (typeof eachExternal !== 'function') {
+      config.externals = config.externals.map((eachExternal) => {
+        if (typeof eachExternal !== "function") {
           return eachExternal;
         }
 
         return (context, callback) => {
-          if (context.request.indexOf('@elastic/eui') > -1) {
+          if (context.request.indexOf("@elastic/eui") > -1) {
             return callback();
           }
 
@@ -90,12 +91,12 @@ const nextConfig = {
 
       // Mock HTMLElement on the server-side
       const definePluginId = config.plugins.findIndex(
-        p => p.constructor.name === 'DefinePlugin'
+        (p) => p.constructor.name === "DefinePlugin"
       );
 
       config.plugins[definePluginId].definitions = {
         ...config.plugins[definePluginId].definitions,
-        HTMLElement: function () { },
+        HTMLElement: function () {},
       };
     }
 
@@ -112,20 +113,23 @@ const nextConfig = {
       })
     );
 
-    config.resolve.mainFields = ['module', 'main'];
+    config.resolve.mainFields = ["module", "main"];
 
     return config;
   },
 };
 
-const parsed = require('dotenv').config({ path: process.env.NODE_ENV === "development" ? `./.env.custom.local` : `./.env.production` }).parsed;
+const parsed = require("dotenv").config({
+  path:
+    process.env.NODE_ENV === "development"
+      ? `./.env.custom.local`
+      : `./.env.production`,
+}).parsed;
 
 if (parsed) {
   nextConfig.env.CONSTELLATE_THEME = parsed.CONSTELLATE_THEME;
   nextConfig.env.PANEL_URL = parsed.PANEL_URL;
 }
-
-
 
 /**
  * Enhances the Next config with the ability to:
@@ -134,7 +138,7 @@ if (parsed) {
  * - Load SCSS files from JavaScript.
  */
 module.exports = withBundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
+  enabled: process.env.ANALYZE === "true",
 })(nextConfig);
 
 /**
@@ -154,11 +158,11 @@ function buildThemeConfig() {
   const themeFiles = glob.sync(
     path.join(
       __dirname,
-      'node_modules',
-      '@elastic',
-      'eui',
-      'dist',
-      'eui_theme_*.min.css'
+      "node_modules",
+      "@elastic",
+      "eui",
+      "dist",
+      "eui_theme_*.min.css"
     )
   );
 
@@ -168,12 +172,12 @@ function buildThemeConfig() {
   };
 
   for (const each of themeFiles) {
-    const basename = path.basename(each, '.min.css');
+    const basename = path.basename(each, ".min.css");
 
-    const themeId = basename.replace(/^eui_theme_/, '');
+    const themeId = basename.replace(/^eui_theme_/, "");
 
     const themeName =
-      themeId[0].toUpperCase() + themeId.slice(1).replace(/_/g, ' ');
+      themeId[0].toUpperCase() + themeId.slice(1).replace(/_/g, " ");
 
     const publicPath = `themes/${basename}.${hashFile(each)}.min.css`;
     const toPath = path.join(
@@ -230,7 +234,7 @@ function hashFile(filePath) {
  * repository name is what will be used to serve the site.
  */
 function derivePathPrefix() {
-  const gitConfigPath = path.join(__dirname, '.git', 'config');
+  const gitConfigPath = path.join(__dirname, ".git", "config");
 
   if (fs.existsSync(gitConfigPath)) {
     const gitConfig = iniparser.parseSync(gitConfigPath);
@@ -239,17 +243,23 @@ function derivePathPrefix() {
       const originUrl = gitConfig['remote "origin"'].url;
 
       // eslint-disable-next-line prettier/prettier
-      return '/' + originUrl.split('/').pop().replace(/\.git$/, '');
+      return (
+        "/" +
+        originUrl
+          .split("/")
+          .pop()
+          .replace(/\.git$/, "")
+      );
     }
   }
 
-  const packageJsonPath = path.join(__dirname, 'package.json');
+  const packageJsonPath = path.join(__dirname, "package.json");
 
   if (fs.existsSync(packageJsonPath)) {
     const { name: packageName } = require(packageJsonPath);
     // Strip out any username / namespace part. This works even if there is
     // no username in the package name.
-    return '/' + packageName.split('/').pop();
+    return "/" + packageName.split("/").pop();
   }
 
   throw new Error(

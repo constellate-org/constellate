@@ -38,7 +38,7 @@ const COLOR_NAMES = [
     'purple',
     'cerulean',
     'aqua',
-    'altgreen',
+    'emerald',
     'burgundy',
     'pink',
     'rose'

@@ -18,36 +18,38 @@
  * import { icon as cross } from '@elastic/eui/es/components/icon/assets/crossInACircleFilled'; */
 
 import {
-    EuiMarkdownFormat,
-    EuiPanel,
-    EuiFlexGroup,
-    EuiFlexItem,
-    getDefaultEuiMarkdownParsingPlugins,
-    getDefaultEuiMarkdownProcessingPlugins,
+  EuiMarkdownFormat,
+  EuiPanel,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiCode,
+  getDefaultEuiMarkdownParsingPlugins,
+  getDefaultEuiMarkdownProcessingPlugins,
 } from "@elastic/eui";
 import remarkFootnotes from "remark-footnotes";
 import remarkSmartypants from "remark-smartypants";
 import remarkNumberedFootnoteLabels from "remark-numbered-footnote-labels";
 import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
-import React from "react";
+import { React, useEffect } from "react";
+import renderFootnoteBlock from "./footnotes_collapse";
 
 import { KatexRenderer, MathMarkdownParser } from "./math";
 
 function DebugParser() {
-    const Parser = this.Parser;
-    const tokenizers = Parser.prototype.blockTokenizers;
-    const methods = Parser.prototype.blockMethods;
+  const Parser = this.Parser;
+  const tokenizers = Parser.prototype.blockTokenizers;
+  const methods = Parser.prototype.blockMethods;
 
-    function tokenizeTest(eat, value, silent) {
-        console.log("test value", value);
+  function tokenizeTest(eat, value, silent) {
+    console.log("test value", value);
 
-        return eat(``)({
-            test: "debug",
-        });
-    }
-    tokenizers.debug = tokenizeTest;
-    methods.splice(methods.indexOf("text"), 0, "debug");
+    return eat(``)({
+      test: "debug",
+    });
+  }
+  tokenizers.debug = tokenizeTest;
+  methods.splice(methods.indexOf("text"), 0, "debug");
 }
 
 const parsingList = getDefaultEuiMarkdownParsingPlugins();
@@ -61,20 +63,26 @@ parsingList.push([remarkFootnotes, {}]);
 const processingList = getDefaultEuiMarkdownProcessingPlugins();
 
 processingList[1][1].components.checkboxplugin =
-    processingList[1][1].components.checkboxPlugin;
+  processingList[1][1].components.checkboxPlugin;
 processingList[1][1].components.mathplugin = KatexRenderer;
 
 // replace <kbd> with <kbd><kbd>
 function doubleKbd(props) {
-    return (
-        <kbd>
-            <kbd {...props}></kbd>
-        </kbd>
-    );
+  return (
+    <kbd>
+      <kbd {...props}></kbd>
+    </kbd>
+  );
+}
+
+// replace EuiCode with transparent wrapper that looks less ugly
+function customCode(props) {
+  return <EuiCode {...props} />;
 }
 processingList[1][1].components.kbd = doubleKbd;
 
-/* processingList.splice(1, 0, [rehypeRaw]); */
+// this lets users put raw HTML in
+processingList.splice(1, 0, [rehypeRaw]);
 
 // console.log(parsingList);
 // @ts-ignore
@@ -83,36 +91,37 @@ processingList[1][1].components.kbd = doubleKbd;
 // console.log(processingList);
 
 export default function TextPanel(props) {
-    return (
-        <EuiPanel
-            hasShadow={false}
-            hasBorder={false}
-            className="eui-fullHeight"
-            grow={true}
-            paddingSize="m"
+  useEffect(renderFootnoteBlock);
+  return (
+    <EuiPanel
+      hasShadow={false}
+      hasBorder={false}
+      className="eui-fullHeight"
+      grow={true}
+      paddingSize="m"
+    >
+      <EuiFlexGroup
+        direction="column"
+        justifyContent="center"
+        className="eui-fullHeight eui-yScroll"
+      >
+        <EuiFlexItem
+          grow
+          className="eui-fullHeight"
+          style={{ padding: "1rem" }}
         >
-            <EuiFlexGroup
-                direction="column"
-                justifyContent="center"
-                className="eui-fullHeight eui-yScroll"
+          <div className="eui-yScroll">
+            <EuiMarkdownFormat
+              parsingPluginList={parsingList}
+              processingPluginList={processingList}
+              id="textContent"
+              grow
             >
-                <EuiFlexItem
-                    grow
-                    className="eui-fullHeight"
-                    style={{ padding: "1rem" }}
-                >
-                    <div className="eui-yScroll">
-                        <EuiMarkdownFormat
-                            parsingPluginList={parsingList}
-                            processingPluginList={processingList}
-                            id="textContent"
-                            grow
-                        >
-                            {props.content}
-                        </EuiMarkdownFormat>
-                    </div>
-                </EuiFlexItem>
-            </EuiFlexGroup>
-        </EuiPanel>
-    );
+              {props.content}
+            </EuiMarkdownFormat>
+          </div>
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    </EuiPanel>
+  );
 }

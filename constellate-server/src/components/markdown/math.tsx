@@ -39,7 +39,7 @@ export function MathMarkdownParser({
     }
     // must consume the exact & entire match string
     return eat(whole)({
-      type: "mathPlugin",
+      type: "mathplugin",
       math: math, // configuration is passed to the renderer
       mode: mode,
     });

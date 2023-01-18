@@ -25,6 +25,8 @@ import {
     EuiShowFor,
     useEuiTheme,
     useIsWithinBreakpoints,
+    EuiResizablePanel,
+    EuiResizableButton,
 } from "@elastic/eui";
 import { useRouter } from "next/router";
 import SideBar from "../../components/side_nav";
@@ -35,15 +37,16 @@ import renderFootnoteBlock from "../../components/markdown/footnotes_collapse";
 import themes from "../../../public/constellate_themes/themes";
 import { readFileSync } from "fs";
 import path from "path";
-import { EuiResizablePanel } from "@elastic/eui/src/components/resizable_container/resizable_panel";
-import { EuiResizableButton } from "@elastic/eui/src/components/resizable_container/resizable_button";
+import Image from "next/image";
 import React from "react";
-import { NextEuiButton, NextEuiButtonIcon } from "../../components/next_eui/button";
+import {
+    NextEuiButton,
+    NextEuiButtonIcon,
+} from "../../components/next_eui/button";
 
 const theme = themes[process.env.CONSTELLATE_THEME];
 
 function StarPage({ constellations }) {
-    useEffect(renderFootnoteBlock);
     const router = useRouter();
     const { colorMode } = useEuiTheme();
     const [isNavOpen, setIsNavOpen] = useState(false);
@@ -62,73 +65,75 @@ function StarPage({ constellations }) {
     const prevId = starId - 1 >= 0 ? starId - 1 : null;
     const nextId = starId + 1 < numIds ? starId + 1 : null;
 
-    const mobileSizes: ('xs' | 's' | 'm' | 'l' | 'xl')[] = ['xs', 's'];
-    const isMobile = useIsWithinBreakpoints(mobileSizes);
-    const showMobile = 'eui-showFor--xs eui-showFor--s'
-    const hideMobile = 'eui-hideFor--xs eui-hideFor--s'
+    const mobileSizes: ("xs" | "s" | "m" | "l" | "xl")[] = ["xs", "s"];
+    const showMobile = "eui-showFor--xs eui-showFor--s";
+    const hideMobile = "eui-hideFor--xs eui-hideFor--s";
 
-    const prevButton = <>
-        <Link href={`/${constellation.slug}/${prevId}`} passHref legacyBehavior>
-            <NextEuiButtonIcon
-                size="xs"
-                id="prevBtn"
-                rel="prev me"
-                color="text"
-                display="fill"
-                iconType='arrowLeft'
-                aria-label='Last Page'
-                href={`/${constellation.slug}/${prevId}`}
-                isDisabled={prevId === null}
-                className={showMobile}
-            />
-        </Link>
-        <Link href={`/${constellation.slug}/${prevId}`} passHref legacyBehavior>
-            <NextEuiButton
-                size="s"
-                id="prevBtn"
-                rel="prev me"
-                color="text"
-                iconType='arrowLeft'
-                href={`/${constellation.slug}/${prevId}`}
-                isDisabled={prevId === null}
-                className={hideMobile}
-            >
-                Last Page
-            </NextEuiButton>
-        </Link>
-    </>;
-    const nextButton = <>
-        <Link href={`/${constellation.slug}/${nextId}`} passHref legacyBehavior>
-            <NextEuiButtonIcon
-                size="xs"
-                color="primary"
-                rel="next me"
-                iconType='arrowRight'
-                display="fill"
-                href={`/${constellation.slug}/${nextId}`}
-                id="nextBtn"
-                aria-label='Next Page'
-                isDisabled={nextId === null}
-                className={showMobile}
-            />
-        </Link>
-        <Link href={`/${constellation.slug}/${nextId}`} passHref legacyBehavior>
-            <NextEuiButton
-                size="s"
-                color="primary"
-                fill
-                rel="next me"
-                iconType='arrowRight'
-                href={`/${constellation.slug}/${nextId}`}
-                id="nextBtn"
-                isDisabled={nextId === null}
-                className={hideMobile}
-            >
-                Next Page
-            </NextEuiButton>
-        </Link>
-    </>
-
+    const prevButton = (
+        <>
+            <Link href={`/${constellation.slug}/${prevId}`} passHref legacyBehavior>
+                <NextEuiButtonIcon
+                    size="xs"
+                    id="prevBtn"
+                    rel="prev me"
+                    color="text"
+                    display="fill"
+                    iconType="arrowLeft"
+                    aria-label="Last Page"
+                    href={`/${constellation.slug}/${prevId}`}
+                    isDisabled={prevId === null}
+                    className={showMobile}
+                />
+            </Link>
+            <Link href={`/${constellation.slug}/${prevId}`} passHref legacyBehavior>
+                <NextEuiButton
+                    size="s"
+                    id="prevBtn"
+                    rel="prev me"
+                    color="text"
+                    iconType="arrowLeft"
+                    href={`/${constellation.slug}/${prevId}`}
+                    isDisabled={prevId === null}
+                    className={hideMobile}
+                >
+                    Last Page
+                </NextEuiButton>
+            </Link>
+        </>
+    );
+    const nextButton = (
+        <>
+            <Link href={`/${constellation.slug}/${nextId}`} passHref legacyBehavior>
+                <NextEuiButtonIcon
+                    size="xs"
+                    color="primary"
+                    rel="next me"
+                    iconType="arrowRight"
+                    display="fill"
+                    href={`/${constellation.slug}/${nextId}`}
+                    id="nextBtn"
+                    aria-label="Next Page"
+                    isDisabled={nextId === null}
+                    className={showMobile}
+                />
+            </Link>
+            <Link href={`/${constellation.slug}/${nextId}`} passHref legacyBehavior>
+                <NextEuiButton
+                    size="s"
+                    color="primary"
+                    fill
+                    rel="next me"
+                    iconType="arrowRight"
+                    href={`/${constellation.slug}/${nextId}`}
+                    id="nextBtn"
+                    isDisabled={nextId === null}
+                    className={hideMobile}
+                >
+                    Next Page
+                </NextEuiButton>
+            </Link>
+        </>
+    );
 
     const imgTabContentFunc = (EuiResizablePanel, EuiResizableButton) => {
         if (shouldRenderImg) {
@@ -184,7 +189,14 @@ function StarPage({ constellations }) {
                         panelled={false}
                     >
                         <EuiPageTemplate.Header
-                            iconType={theme["site_logo"]}
+                            iconType={() => (
+                                <Image
+                                    src={theme["site_logo"]}
+                                    width={32}
+                                    height={32}
+                                    alt="Logo"
+                                />
+                            )}
                             bottomBorder={false}
                             paddingSize="m"
                             pageTitle={constellation.title}
@@ -199,7 +211,7 @@ function StarPage({ constellations }) {
                                 prevButton,
                             ]}
                             responsive={false}
-                            rightSideGroupProps={{ style: { alignItems: "center" } }}
+                            rightSideGroupProps={{ style: { alignItems: "left" } }}
                             id="pageHeader"
                         ></EuiPageTemplate.Header>
                         {isNavOpen && (
@@ -285,7 +297,10 @@ function StarPage({ constellations }) {
                                                 content={constellation.stars[starId].markdown}
                                             />
                                         </EuiResizablePanel>
-                                        <EuiResizableButton id="horizResizeButton" isHorizontal={true} />
+                                        <EuiResizableButton
+                                            id="horizResizeButton"
+                                            isHorizontal={true}
+                                        />
                                         {imgTabContentFunc(EuiResizablePanel, EuiResizableButton)}
                                     </>
                                 )}
@@ -328,9 +343,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps() {
     /* const res = await fetch(
-        *   'file:///home/nicholas/programs/constellations/metropolis-hastings/mcmc.constellate.json'
-        * );
-        * const constellation: Constellation = await res.json();  */
+     *   'file:///home/nicholas/programs/constellations/metropolis-hastings/mcmc.constellate.json'
+     * );
+     * const constellation: Constellation = await res.json();  */
 
     const constellations = {};
     glob

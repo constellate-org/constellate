@@ -27,17 +27,15 @@ export default function CustomStyling() {
         // we can't dilute this as much or we run out of colors and we get banding issues
         primaryBg = shade(t.colors.primary, 0.4);
         accentBg = shade(t.colors.accent, 0.4);
-        colors = dark_css + '\n' + dark_color_css;
+        colors = dark_css + "\n" + dark_color_css;
     } else {
         primaryBg = tint(t.colors.primary, 0.5);
         accentBg = tint(t.colors.accent, 0.5);
-        colors = light_css + '\n' + light_color_css;
+        colors = light_css + "\n" + light_color_css;
     }
 
     const styles = css`
         ${colors}
-
-    ${panelThemes(t)}
 
     html {
       font-feature-settings: ${t.font.featureSettings};
@@ -67,10 +65,14 @@ export default function CustomStyling() {
     }
 
     .euiText code.euiCode {
-        font-family: ${t.font.familyCode};
+        color: ${transparentize(t.colors.text, 0.9)};
+        background-color: ${transparentize(t.colors.emptyShade, 1)};
+        font-weight: 400;
+        font-size: 85%;
+        padding-inline: 0px;
     }
-        #textContent {
-        border-color: ${t.colors.lightShade};
+    #textContent {
+        border-color: ${t.colors.primaryText};
         font-family: ${theme.text_font || t.font.family};
         ${useEuiFontSize("l").fontSize}
     }
@@ -138,7 +140,7 @@ export default function CustomStyling() {
 
 #vg-tooltip-element.vg-tooltip {
     font-family: monospace;
-    ${useEuiFontSize('xxs')}
+    ${useEuiFontSize("xxs")}
     border: none;
     border-radius: ${t.border.radius.small};
 }
