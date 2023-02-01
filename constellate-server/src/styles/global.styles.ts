@@ -22,6 +22,7 @@ const globalStyles = css`
 
   a {
     color: #0077cc;
+    text-decoration: none;
   }
 
   * {
@@ -208,10 +209,6 @@ const globalStyles = css`
   .noBottomBorderRadius {
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
-  }
-
-  a.euiSideNavItemButton {
-    text-decoration: none;
   }
 `;
 
