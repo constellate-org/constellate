@@ -209,6 +209,10 @@ const globalStyles = css`
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
   }
+
+  a.euiSideNavItemButton {
+    text-decoration: none;
+  }
 `;
 
 export default globalStyles;
